@@ -1,0 +1,49 @@
+RentManager-1.4.1
+	+) Improved search performance.
+
+RentManager-1.4.0
+	+) Implemented search function (Chinese pinyin search available when language is Chinese).
+
+RentManager-1.3.2
+	+) Added function to delete the latest bill.
+
+RentManager-1.3.1
+	+) Fixed bug of cannot be shut down completely in some cases.
+	+) Fixed bug of cannot switch language to English when locale is Chinese.
+	+) Added menu item to view this update history in the program.
+
+RentManager-1.3.0
+	+) Fixed bug of not saving the other fees.
+	+) Added note feature on other-fee cells.
+
+RentManager-1.2.2
+	+) Fixed bug of tool tip not following mouse.
+	+) Fixed bug of tenant contract start date.
+
+RentManager-1.2.1
+	+) Edited changing policies of contract change date, water and electricity records.
+
+RentManager-1.2.0
+	+) Improved loading speed of clicking "Open File...".
+	+) Added text file export function.
+
+RentManager-1.1.0
+	+) Added tool tips to add, remove buttons, and water, electricity columns in the table.
+	+) Fixed bug of not showing error message at the correct position.
+	+) Implemented "about" function.
+	+) Added data modification notice when exit.
+	+) Fixed bug of when not editable, bill still can be saved.
+
+RentManager-1.0.3
+	+) Fixed bug of not updating cleaning service price on the table display
+
+RentManager-1.0.2
+	+) Fixed bug of failure to create new folder
+
+RentManager-1.0.1
+	+) Fixed bug of not setting default values of blank fields.
+	+) Fixed bug of not supporting file paths that contain UTF-8 characters.
+	+) Fixed bug of not rejecting date inputs with invalid format.
+
+RentManager-1.0.0
+	+) Initial edition for testing purpose.
