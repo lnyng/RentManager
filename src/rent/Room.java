@@ -21,6 +21,7 @@ public class Room implements MutableTreeNode, Serializable {
     private int storyNumber;
     private int rent;
     private int deposit;
+    private int cleaningPrice;
     private ArrayList<Tenant> currTenants = new ArrayList<Tenant>();
     private Tenant contractSigner;
     private boolean useInternet;
@@ -177,6 +178,16 @@ public class Room implements MutableTreeNode, Serializable {
 	this.otherFeeNote = otherFeeNote;
     }
 
+    public int getCleaningPrice() {
+	if (cleaningPrice == Integer.MIN_VALUE)
+	    setCleaningPrice(getBuilding().getCleaningPrice());
+	return cleaningPrice;
+    }
+
+    public void setCleaningPrice(int cleaningPrice) {
+	this.cleaningPrice = cleaningPrice;
+    }
+
     public boolean isInitializing() {
 	return isInitializing;
     }
@@ -266,6 +277,7 @@ public class Room implements MutableTreeNode, Serializable {
 
     private void readObject(java.io.ObjectInputStream in) throws IOException,
 	    ClassNotFoundException {
+	cleaningPrice = Integer.MIN_VALUE;
 	in.defaultReadObject();
 	if (otherFeeNote == null)
 	    otherFeeNote = "";

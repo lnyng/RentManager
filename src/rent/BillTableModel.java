@@ -1,4 +1,5 @@
 package rent;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -143,7 +144,8 @@ public class BillTableModel extends AbstractTableModel {
 		.getInternetPrice() : 0;
 	int acBill = ((Boolean) row[AC]) ? room.getBuilding().getAcPrice() : 0;
 	int total = (int) ((Integer) row[RENT] + waterBill + electricityBill
-		+ room.getBuilding().getCleaningPrice() + internetBill + acBill + (Integer) row[OTHER_FEE]);
+		+ room.getCleaningPrice() + internetBill + acBill
+		+ (Integer) row[OTHER_FEE] + 0.5);
 	return total;
     }
 
@@ -197,8 +199,8 @@ public class BillTableModel extends AbstractTableModel {
     public boolean isCellEditable(int r, int c) {
 	if (!rentManager.isGlobalEditable())
 	    return false;
-	if (c == WATER || c == ELECTRICITY || c == INTERNET || c == AC
-		|| c == OTHER_FEE)
+	if (c == CLEANING || c == WATER || c == ELECTRICITY || c == INTERNET
+		|| c == AC || c == OTHER_FEE)
 	    return true;
 	return false;
     }
@@ -229,7 +231,7 @@ public class BillTableModel extends AbstractTableModel {
 	Integer water = room.getWaterRecord() + room.getWaterUsed();
 	Integer electricity = room.getElectricityRecord()
 		+ room.getElectricityUsed();
-	Integer cleaning = room.getBuilding().getCleaningPrice();
+	Integer cleaning = room.getCleaningPrice();
 	Boolean internet = room.isUseInternet();
 	Boolean ac = room.isUseAC();
 	Integer otherFee = room.getOtherFee();

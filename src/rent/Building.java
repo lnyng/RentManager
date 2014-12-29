@@ -1,4 +1,5 @@
 package rent;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,13 +18,13 @@ public class Building implements MutableTreeNode, Serializable {
     private DefaultMutableTreeNode root;
     private String address;
     private String name;
-    private ArrayList<Story> stories;
     private int numberStories;
     private double electricityPrice;
     private double waterPrice;
     private int internetPrice;
     private int cleaningPrice;
     private int acPrice;
+    private ArrayList<Story> stories;
 
     public Building(String address, String name, int numberStories,
 	    double electricityPrice, double waterPrice, int internetPrice,
@@ -157,7 +158,7 @@ public class Building implements MutableTreeNode, Serializable {
 
 	@Override
 	public TreeNode getParent() {
-	    return Building.this;
+	    return getBuilding();
 	}
 
 	@Override
@@ -198,17 +199,15 @@ public class Building implements MutableTreeNode, Serializable {
 
 	@Override
 	public void setUserObject(Object object) {
-	    return;
 	}
 
 	@Override
 	public void removeFromParent() {
-	    Building.this.remove(this);
+	    getBuilding().remove(this);
 	}
 
 	@Override
 	public void setParent(MutableTreeNode newParent) {
-	    return;
 	}
     }
 

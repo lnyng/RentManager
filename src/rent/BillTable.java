@@ -144,7 +144,7 @@ public class BillTable extends JTable implements Popuppable {
 				.getString("message.water.record.error");
 			JOptionPane.showMessageDialog(BillTable.this, message);
 			row[col] = room.getWaterRecord();
-			getModel().fireTableCellUpdated(firstRow, col);
+			model.fireTableCellUpdated(firstRow, col);
 			isChangingTable = false;
 			return;
 		    }
@@ -157,7 +157,7 @@ public class BillTable extends JTable implements Popuppable {
 				.getString("message.elect.record.error");
 			JOptionPane.showMessageDialog(BillTable.this, message);
 			row[col] = room.getElectricityRecord();
-			getModel().fireTableCellUpdated(firstRow, col);
+			model.fireTableCellUpdated(firstRow, col);
 			isChangingTable = false;
 			return;
 		    }
@@ -166,11 +166,20 @@ public class BillTable extends JTable implements Popuppable {
 		    int otherFee = (int) row[col];
 		    if (otherFee < 0) {
 			row[col] = room.getOtherFee();
-			getModel().fireTableCellUpdated(firstRow, col);
+			model.fireTableCellUpdated(firstRow, col);
 			isChangingTable = false;
 			return;
 		    }
 		    room.setOtherFee(otherFee);
+		} else if (col == BillTableModel.CLEANING) {
+		    int cleaningPrice = (int) row[col];
+		    if (cleaningPrice < 0) {
+			row[col] = room.getCleaningPrice();
+			model.fireTableCellUpdated(firstRow, col);
+			isChangingTable = false;
+			return;
+		    }
+		    room.setCleaningPrice(cleaningPrice);
 		}
 		rentManager.getTreePanel().getTree()
 			.setSelectionPath(TreePanel.getPathToRoot(room));

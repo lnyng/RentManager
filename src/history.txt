@@ -1,5 +1,7 @@
-RentManager-1.4.1
+RentManager-1.5.0
 	+) Improved search performance.
+	+) Fixed the bug of only rounds down the numbers
+	+) Made cleaning price editable
 
 RentManager-1.4.0
 	+) Implemented search function (Chinese pinyin search available when language is Chinese).
