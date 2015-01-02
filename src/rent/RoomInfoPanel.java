@@ -362,12 +362,12 @@ public class RoomInfoPanel extends ElementInfoPanel {
 		return;
 	    JTextComponent comp = (JTextComponent) e.getSource();
 	    if (comp.equals(tf_contractChangeDate))
-		if(currRoom.isOccupied()
-		    && currRoom.getContractSigner().isInitializing()) {
-		oldValue = comp.getText();
-		return;
-	    } else 
-		return;
+		if (currRoom.isOccupied()
+			&& currRoom.getContractSigner().isInitializing()) {
+		    oldValue = comp.getText();
+		    return;
+		} else
+		    return;
 	    if (comp.equals(tf_electricityRecord)
 		    || comp.equals(tf_waterRecord))
 		if (!currRoom.isInitializing())
@@ -406,6 +406,11 @@ public class RoomInfoPanel extends ElementInfoPanel {
 		    tf_rent.setText(oldValue);
 		    return;
 		}
+		RentManager.logger.info("The rent of room ["
+			+ currRoom.toString() + "] at building ["
+			+ currRoom.getBuilding().toString()
+			+ "] has been updated from " + oldValue + " to "
+			+ newValue + ".");
 		currRoom.setRent(rent);
 		updateTable();
 	    } else if (comp.equals(tf_deposit)) {
@@ -420,8 +425,17 @@ public class RoomInfoPanel extends ElementInfoPanel {
 		    tf_deposit.setText(oldValue);
 		    return;
 		}
+		RentManager.logger.info("The deposit of room ["
+			+ currRoom.toString() + "] at building ["
+			+ currRoom.getBuilding().toString()
+			+ "] has been updated from " + oldValue + " to "
+			+ newValue + ".");
 		currRoom.setDeposit(deposit);
 	    } else if (comp.equals(ta_note)) {
+		RentManager.logger.info("The note of room ["
+			+ currRoom.toString() + "] at building ["
+			+ currRoom.getBuilding().toString()
+			+ "] has been updated .");
 		currRoom.setNote(newValue);
 	    } else if (comp.equals(tf_waterRecord)) {
 		int waterRecord = 0;
@@ -436,6 +450,11 @@ public class RoomInfoPanel extends ElementInfoPanel {
 		    tf_waterRecord.setText(oldValue);
 		    return;
 		}
+		RentManager.logger.info("The water record of room ["
+			+ currRoom.toString() + "] at building ["
+			+ currRoom.getBuilding().toString()
+			+ "] has been updated from " + oldValue + " to "
+			+ newValue + ".");
 		currRoom.setWaterRecord(waterRecord);
 		updateTable();
 	    } else if (comp.equals(tf_electricityRecord)) {
@@ -451,6 +470,11 @@ public class RoomInfoPanel extends ElementInfoPanel {
 		    tf_electricityRecord.setText(oldValue);
 		    return;
 		}
+		RentManager.logger.info("The electricity record of room ["
+			+ currRoom.toString() + "] at building ["
+			+ currRoom.getBuilding().toString()
+			+ "] has been updated from " + oldValue + " to "
+			+ newValue + ".");
 		currRoom.setElectricityRecord(electricityRecord);
 		updateTable();
 	    } else if (comp.equals(tf_contractChangeDate)) {
@@ -462,6 +486,11 @@ public class RoomInfoPanel extends ElementInfoPanel {
 		    tf_contractChangeDate.setText(oldValue);
 		    return;
 		}
+		RentManager.logger.info("The contract change date of room ["
+			+ currRoom.toString() + "] at building ["
+			+ currRoom.getBuilding().toString()
+			+ "] has been updated from " + oldValue + " to "
+			+ newValue + ".");
 		currRoom.setContractChangeDate(contractStart);
 	    }
 	    rentManager.setHasModified(true);
@@ -472,11 +501,20 @@ public class RoomInfoPanel extends ElementInfoPanel {
 	    if (isUpdatingInfo)
 		return;
 	    Object comp = e.getSource();
+	    boolean selected = ((JCheckBox) comp).isSelected();
 	    if (comp.equals(cb_useAc)) {
-		currRoom.setUseAC(cb_useAc.isSelected());
+		RentManager.logger.info("The AC using state of room ["
+			+ currRoom.toString() + "] at building ["
+			+ currRoom.getBuilding().toString()
+			+ "] has been updated to " + selected + ".");
+		currRoom.setUseAC(selected);
 		updateTable();
 	    } else if (comp.equals(cb_useInternet)) {
-		currRoom.setUseInternet(cb_useInternet.isSelected());
+		RentManager.logger.info("The internet using state of room ["
+			+ currRoom.toString() + "] at building ["
+			+ currRoom.getBuilding().toString()
+			+ "] has been updated to " + selected + ".");
+		currRoom.setUseInternet(selected);
 		updateTable();
 	    }
 	    rentManager.setHasModified(true);

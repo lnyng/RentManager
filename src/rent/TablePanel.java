@@ -57,6 +57,11 @@ public class TablePanel extends JPanel implements ChangeListener {
 	return t;
     }
 
+    /**
+     * Switch the current view of the table panel to the object element
+     * 
+     * @param element The object to be switched to
+     */
     public void switchElement(Object element) {
 	isSwitchingElement = true;
 	if (element instanceof Building) {

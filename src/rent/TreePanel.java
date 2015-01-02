@@ -214,6 +214,11 @@ class TreePanel extends JPanel implements TreeSelectionListener,
 			.getSelectedComponent();
 		if (adderPane.addElement()) {
 		    MutableTreeNode newElement = adderPane.getNewElement();
+		    RentManager.logger.info("New element "
+			    + newElement.getClass().getSimpleName() + " ["
+			    + newElement.toString() + "] is added to "
+			    + newElement.getParent().getClass().getSimpleName() + " ["
+			    + newElement.getParent().toString() + "].");
 		    ((DefaultTreeModel) tree.getModel()).reload(adderPane
 			    .getNewElement().getParent());
 		    if (adderPane instanceof AddBuildingPanel) {
@@ -257,6 +262,10 @@ class TreePanel extends JPanel implements TreeSelectionListener,
 			JOptionPane.YES_NO_OPTION);
 
 		if (result == JOptionPane.OK_OPTION) {
+		    RentManager.logger.info("Element "
+			    + element.getClass().getSimpleName() + " ["
+			    + element.toString()
+			    + "] and its children are removed.");
 		    if (className.equals(rentManager.getString("class.bldg"))) {
 			rentManager.getTablePanel().removeTable(
 				(Building) element);

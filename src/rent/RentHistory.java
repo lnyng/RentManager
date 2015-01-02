@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class RentHistory implements Serializable {
@@ -54,12 +55,13 @@ public class RentHistory implements Serializable {
 		.equals(rentData.getDataMonth());
     }
 
-    public boolean isDataComplete() {
+    public ArrayList<String> getMissingFiles() {
+	ArrayList<String> missing = new ArrayList<String>();
 	for (String name : rentDataNames) {
 	    File file = new File("data/" + name);
 	    if (!file.exists())
-		return false;
+		missing.add(name);
 	}
-	return true;
+	return missing;
     }
 }

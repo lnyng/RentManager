@@ -242,6 +242,9 @@ public class TenantInfoPanel extends ElementInfoPanel {
 	    if (isUpdatingInfo)
 		return;
 	    if (e.getSource().equals(cb_signer)) {
+		RentManager.logger.info("Tenant [" + currTenant.toString()
+			+ "] is set as the contract signer of room "
+			+ currTenant.getParent().toString() + ".");
 		cb_signer.setEnabled(false);
 		Room room = (Room) currTenant.getParent();
 		room.getContractSigner().setIsContractSigner(false);
@@ -283,6 +286,11 @@ public class TenantInfoPanel extends ElementInfoPanel {
 	    if (newValue.equals(oldValue))
 		return;
 	    if (comp.equals(tf_name)) {
+		RentManager.logger.info("The name of tenant ["
+			+ currTenant.toString() + "] at room ["
+			+ currTenant.getParent().toString()
+			+ "] has been updated from " + oldValue + " to "
+			+ newValue + ".");
 		currTenant.setName(newValue);
 		DefaultTreeModel model = (DefaultTreeModel) rentManager
 			.getTreePanel().getTree().getModel();
@@ -294,8 +302,18 @@ public class TenantInfoPanel extends ElementInfoPanel {
 			    .updateTenant(currTenant);
 		}
 	    } else if (comp.equals(tf_id)) {
+		RentManager.logger.info("The ID of tenant ["
+			+ currTenant.toString() + "] at room ["
+			+ currTenant.getParent().toString()
+			+ "] has been updated from " + oldValue + " to "
+			+ newValue + ".");
 		currTenant.setId(newValue);
 	    } else if (comp.equals(tf_phone)) {
+		RentManager.logger.info("The phone number of tenant ["
+			+ currTenant.toString() + "] at room ["
+			+ currTenant.getParent().toString()
+			+ "] has been updated from " + oldValue + " to "
+			+ newValue + ".");
 		currTenant.setPhoneNumber(newValue);
 	    } else if (comp.equals(tf_contractStart)) {
 		Date newDate = null;
@@ -306,8 +324,16 @@ public class TenantInfoPanel extends ElementInfoPanel {
 		    tf_contractStart.setText(oldValue);
 		    return;
 		}
+		RentManager.logger.info("The contract start date of tenant ["
+			+ currTenant.toString() + "] at room ["
+			+ currTenant.getParent().toString()
+			+ "] has been updated from " + oldValue + " to "
+			+ newValue + ".");
 		((Room) currTenant.getParent()).setContractChangeDate(newDate);
 	    } else if (comp.equals(ta_note)) {
+		RentManager.logger.info("The note of tenant [" + currTenant.toString()
+			+ "] at room [" + currTenant.getParent().toString()
+			+ "] has been updated.");
 		currTenant.setNote(newValue);
 	    }
 	    rentManager.setHasModified(true);

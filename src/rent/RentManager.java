@@ -13,7 +13,6 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,10 +27,16 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -52,8 +57,9 @@ import javax.swing.tree.MutableTreeNode;
 @SuppressWarnings("serial")
 public class RentManager extends JFrame {
 
-    public static final String version = "1.4.1";
+    public static final String VERSION = "1.5.0";
     public static RentManager rm;
+    public static Logger logger = Logger.getLogger(RentManager.class.getName());
     private Class<?> cls;
     private RentHistory rentHistory;
     private RentData rentData;
@@ -104,13 +110,19 @@ public class RentManager extends JFrame {
 		    .getCodeSource().getLocation().toURI()).getParentFile()
 		    .getAbsolutePath();
 	} catch (URISyntaxException e1) {
-	    e1.printStackTrace();
+	    logger.log(Level.SEVERE, "Error occur when loading class loaction",
+		    e1);
 	}
+
+	loadBundle(Locale.getDefault());
 
 	File history = new File(path + "/data/rent_history.ser");
 	DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-	rentHistory = new RentHistory();
+	rentHistory = null;
 	if (!history.exists()) {
+	    rentHistory = new RentHistory();
+	    logger.info("Rent history (" + history.getAbsolutePath().toString()
+		    + ") does not exist. A new one is created.");
 	    rentData = new RentData(root);
 	    File dir = new File(path + "/data");
 	    if (!dir.exists())
@@ -121,29 +133,41 @@ public class RentManager extends JFrame {
 		InputStream buffer = new BufferedInputStream(file);
 		ObjectInput input = new ObjectInputStream(buffer);
 		rentHistory = (RentHistory) input.readObject();
-		if (!rentHistory.isDataComplete()) {
+		ArrayList<String> missing = rentHistory.getMissingFiles();
+		if (!missing.isEmpty()) {
+		    String names = "";
+		    for (String name : missing)
+			names += name + " ";
+		    String msg = "The rent data are not complete. Files: "
+			    + names + "is/are missing";
 		    JOptionPane.showMessageDialog(this,
-			    getString("message.miss.history"));
+			    getString("message.missing.history"));
+		    logger.severe(msg);
 		    System.exit(1);
 		}
 		rentData = rentHistory.getLatestRentData();
-		if (rentData == null)
+		if (rentData == null) {
+		    logger.info("Rent data file does not exist. A new one is created.");
 		    rentData = new RentData(root);
+		}
 		input.close();
+		logger.info("Files are loaded successfully.");
 	    } catch (IOException e) {
-		e.printStackTrace();
 		JOptionPane.showMessageDialog(this,
 			getString("exception.io.init"));
+		logger.log(Level.WARNING, getString("exception.io.init"), e);
+		rentHistory = new RentHistory();
 		rentData = new RentData(root);
 	    } catch (ClassNotFoundException e) {
-		e.printStackTrace();
 		JOptionPane.showMessageDialog(this,
 			getString("exception.class.not.found.init"));
+		logger.log(Level.WARNING,
+			getString("exception.class.not.found.init"), e);
+		rentHistory = new RentHistory();
 		rentData = new RentData(root);
 	    }
 	}
 	isGlobalEditable = true;
-	locale = Locale.getDefault();
 	reset();
 	this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 	this.addWindowListener(new WindowAdapter() {
@@ -152,12 +176,21 @@ public class RentManager extends JFrame {
 		    int result = JOptionPane
 			    .showConfirmDialog(RentManager.this,
 				    getString("message.save.changes"));
-		    if (result == JOptionPane.CANCEL_OPTION)
+		    if (result == JOptionPane.CANCEL_OPTION) {
 			return;
-		    else if (result == JOptionPane.OK_OPTION) {
+		    } else if (result == JOptionPane.OK_OPTION) {
+			logger.info("Program exits with changes saved."
+				+ System.lineSeparator());
 			save();
+		    } else if (result == JOptionPane.NO_OPTION) {
+			logger.info("Program exits without saving changes."
+				+ System.lineSeparator());
 		    }
-		}
+		} else
+		    logger.info("Program exits without any change."
+			    + System.lineSeparator());
+		for (Handler h : logger.getHandlers())
+		    h.close();
 		System.gc();
 		dispose();
 		System.exit(0);
@@ -166,10 +199,12 @@ public class RentManager extends JFrame {
 	hasModified = false;
 	this.setLocationRelativeTo(null);
 	this.setVisible(true);
+	logger.info("Program launched successfully.");
     }
 
-    public void loadBundle(Locale locale) {
-	this.locale = locale;
+    public void loadBundle(Locale loc) {
+	this.locale = loc;
+	logger.info("Locale is set to " + locale.toString() + " .");
 	rentBundle = ResourceBundle.getBundle("resource/RentBundle",
 		this.locale, new ResourceBundle.Control() {
 		    public ResourceBundle newBundle(String baseName,
@@ -195,13 +230,15 @@ public class RentManager extends JFrame {
 			}
 			if (stream != null) {
 			    try {
-				if (!locale.equals(Locale.US)) {
+				if (locale.equals(Locale.US)
+					|| locale.equals(Locale.ROOT)) {
+				    bundle = new PropertyResourceBundle(
+					    new InputStreamReader(stream));
+				} else {
 				    bundle = new PropertyResourceBundle(
 					    new InputStreamReader(stream,
 						    "UTF-8"));
-				} else {
-				    bundle = new PropertyResourceBundle(
-					    new InputStreamReader(stream));
+				    logger.info("Try to decode resource bundle with UTF-8.");
 				}
 			    } finally {
 				stream.close();
@@ -212,12 +249,12 @@ public class RentManager extends JFrame {
 		});
     }
 
-    public void reset() {
-	reset(locale);
-    }
-
     public void reset(Locale locale) {
 	loadBundle(locale);
+	reset();
+    }
+
+    public void reset() {
 	this.getContentPane().removeAll();
 	rentData.getRoot().setUserObject(getString("root"));
 	nullTenant = new Tenant(getString("default.none"), "", "", "", false,
@@ -262,6 +299,7 @@ public class RentManager extends JFrame {
 	this.setMinimumSize(new Dimension(683, 450));
 	this.setPreferredSize(new Dimension(1000, 750));
 	this.pack();
+	logger.info("UI is reset.");
     }
 
     public String getString(String key) {
@@ -294,7 +332,7 @@ public class RentManager extends JFrame {
 	    m_file.setMnemonic(KeyEvent.VK_F);
 	    m_language.setMnemonic(KeyEvent.VK_L);
 	    m_help.setMnemonic(KeyEvent.VK_H);
-	    
+
 	    mi_new.addActionListener(this);
 	    mi_open.addActionListener(this);
 	    mi_save.addActionListener(this);
@@ -307,7 +345,7 @@ public class RentManager extends JFrame {
 	    mi_chinese.addActionListener(this);
 	    mi_english.addActionListener(this);
 	    mi_delete.addActionListener(this);
-	    
+
 	    mi_new.setMnemonic(KeyEvent.VK_N);
 	    mi_open.setMnemonic(KeyEvent.VK_O);
 	    mi_save.setMnemonic(KeyEvent.VK_S);
@@ -400,37 +438,31 @@ public class RentManager extends JFrame {
 			message, getString("title.message"),
 			JOptionPane.OK_CANCEL_OPTION);
 		if (result == JOptionPane.OK_OPTION) {
-		    File save = null;
-		    boolean isInNewMonth = rentHistory.isInNewMonth(rentData);
-		    if (isInNewMonth) {
-			save = new File(path + "/data/"
-				+ rentData.getFilename());
-			rentHistory.getRentDataNames().add(
-				rentData.getFilename());
-		    } else {
-			String name = rentHistory.getRentDataNames().getLast();
-			save = new File(path + "/data/" + name);
-		    }
-		    try {
-			OutputStream file = new FileOutputStream(save);
-			OutputStream buffer = new BufferedOutputStream(file);
-			ObjectOutputStream out = new ObjectOutputStream(buffer);
-			out.writeObject(rentData);
-			out.flush();
+		    if (isHasModified()) {
+			String filePath = "";
+			boolean isInNewMonth = rentHistory
+				.isInNewMonth(rentData);
 			if (isInNewMonth) {
-			    file = new FileOutputStream(path
-				    + "/data/rent_history.ser");
-			    buffer = new BufferedOutputStream(file);
-			    out = new ObjectOutputStream(buffer);
-			    out.writeObject(rentHistory);
+			    filePath = path + "/data/" + rentData.getFilename();
+			    rentHistory.getRentDataNames().add(
+				    rentData.getFilename());
+			} else {
+			    String name = rentHistory.getRentDataNames()
+				    .getLast();
+			    filePath = path + "/data/" + name;
 			}
-			out.close();
-			buffer.close();
-			file.close();
-		    } catch (FileNotFoundException ext) {
-			ext.printStackTrace();
-		    } catch (IOException ext) {
-			ext.printStackTrace();
+			try {
+			    saveFile(filePath, rentData);
+			    if (isInNewMonth) {
+				saveFile(path + "/data/rent_history.ser",
+					rentHistory);
+			    }
+			} catch (IOException ext) {
+			    logger.log(
+				    Level.SEVERE,
+				    "Error occur when trying to save the old bill before creating a new one",
+				    ext);
+			}
 		    }
 
 		    Enumeration<Building> bldgs = getRoot().children();
@@ -466,6 +498,7 @@ public class RentManager extends JFrame {
 		    if (rentHistory.getRentDataNames().size() != 0)
 			mi_delete.setEnabled(true);
 		    mi_saveAsNew.setEnabled(false);
+		    logger.info("New bill is created by user.");
 		}
 	    } else if (source.equals(mi_open)) {
 		if (hasModified) {
@@ -475,7 +508,11 @@ public class RentManager extends JFrame {
 		    if (result == JOptionPane.CANCEL_OPTION)
 			return;
 		    else if (result == JOptionPane.OK_OPTION) {
-			save();
+			if (!save()) {
+			    JOptionPane.showMessageDialog(RentManager.this,
+				    getString("message.fail.to.save"));
+			    return;
+			}
 		    }
 		}
 		fc.setCurrentDirectory(new File(path + "/data"));
@@ -489,12 +526,14 @@ public class RentManager extends JFrame {
 			newData = (RentData) input.readObject();
 			input.close();
 		    } catch (IOException ext) {
-			ext.printStackTrace();
+			logger.log(Level.SEVERE,
+				"Error occur when opening data file", ext);
 			JOptionPane.showMessageDialog(RentManager.this,
 				getString("exception.io"));
 			return;
 		    } catch (ClassNotFoundException ext) {
-			ext.printStackTrace();
+			logger.log(Level.SEVERE,
+				"Error occur when opening data file", ext);
 			JOptionPane.showMessageDialog(RentManager.this,
 				getString("exception.class.not.found"));
 			return;
@@ -507,38 +546,31 @@ public class RentManager extends JFrame {
 		    }
 		    rentData = newData;
 		    setHasModified(false);
+		    logger.info("Data file " + rentData.getFilename()
+			    + " is opened without error.");
 		    reset();
 		}
 	    } else if (source.equals(mi_save)) {
-		save();
+		if (!save()) {
+		    JOptionPane.showMessageDialog(RentManager.this,
+			    getString("message.fail.to.save"));
+		    return;
+		}
+		logger.info("Data file " + rentData.getFilename()
+			+ " is saved.");
 		if (rentHistory.getRentDataNames().size() != 0)
 		    mi_delete.setEnabled(true);
 		mi_saveAsNew.setEnabled(true);
 	    } else if (source.equals(mi_saveAsNew)) {
 		rentData.increaseVersion();
-		String name = path + "/data/" + rentData.getFilename();
-		File save = new File(name);
-		rentHistory.getRentDataNames().add(rentData.getFilename());
-		try {
-		    OutputStream file = new FileOutputStream(save);
-		    OutputStream buffer = new BufferedOutputStream(file);
-		    ObjectOutputStream out = new ObjectOutputStream(buffer);
-		    out.writeObject(rentData);
-		    out.flush();
-		    file = new FileOutputStream(path + "/data/rent_history.ser");
-		    buffer = new BufferedOutputStream(file);
-		    out = new ObjectOutputStream(buffer);
-		    out.writeObject(rentHistory);
-		    out.close();
-		    setHasModified(false);
+		if (!save()) {
 		    JOptionPane.showMessageDialog(RentManager.this,
-			    getString("message.save.success"));
-		} catch (IOException ext) {
-		    ext.printStackTrace();
-		    JOptionPane.showMessageDialog(RentManager.this,
-			    getString("exception.io"));
+			    getString("message.fail.to.save"));
+		    rentData.setVersion(rentData.getVersion() - 1);
 		    return;
 		}
+		logger.info("Data file " + rentData.getFilename()
+			+ " is saved as new file.");
 		if (rentHistory.getRentDataNames().size() != 0)
 		    mi_delete.setEnabled(true);
 	    }
@@ -559,7 +591,11 @@ public class RentManager extends JFrame {
 		    if (result == JOptionPane.CANCEL_OPTION)
 			return;
 		    else if (result == JOptionPane.OK_OPTION) {
-			save();
+			if (!save()) {
+			    JOptionPane.showMessageDialog(RentManager.this,
+				    getString("message.fail.to.save"));
+			    return;
+			}
 		    }
 		}
 		RentManager.this.dispose();
@@ -571,7 +607,7 @@ public class RentManager extends JFrame {
 
 	    } else if (source.equals(mi_about)) {
 		String message = MessageFormat.format(
-			getString("message.credits"), version);
+			getString("message.credits"), VERSION);
 		JOptionPane.showMessageDialog(RentManager.this, message);
 	    } else if (source.equals(mi_updateHistory)) {
 		JTextArea ta_updateHistory = new JTextArea();
@@ -590,14 +626,10 @@ public class RentManager extends JFrame {
 		    updateHistory = sb.toString();
 		    br.close();
 		} catch (IOException ext) {
+		    logger.log(Level.SEVERE,
+			    "Error occur when loading update history file", ext);
 		    String message = getString("message.fail.update.history");
 		    JOptionPane.showMessageDialog(RentManager.this, message);
-		    try {
-			if (br != null)
-			    br.close();
-		    } catch (IOException e1) {
-			e1.printStackTrace();
-		    }
 		    return;
 		}
 		ta_updateHistory.setText(updateHistory);
@@ -615,8 +647,7 @@ public class RentManager extends JFrame {
 		JLabel message = new JLabel("<html><p style='width:200px'>"
 			+ MessageFormat.format(
 				getString("message.delete.current.bill"),
-				rentData.getFilename(), "<br>")
-			+ "</html>");
+				rentData.getFilename(), "<br>") + "</html>");
 		int result = JOptionPane.showConfirmDialog(RentManager.this,
 			message, "Confirm: Delete Current Bill",
 			JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -628,13 +659,19 @@ public class RentManager extends JFrame {
 			    JOptionPane.YES_NO_OPTION,
 			    JOptionPane.WARNING_MESSAGE);
 		    if (reconfirm == JOptionPane.YES_OPTION) {
+			String oldName = rentData.getFilename();
 			if (rentHistory.isInNewMonth(rentData)) {
 			    try {
 				rentData = rentHistory.getLatestRentData();
 			    } catch (ClassNotFoundException | IOException e1) {
-				e1.printStackTrace();
+				logger.log(
+					Level.SEVERE,
+					"Error occur when loading the latest rent data",
+					e1);
 			    }
 			    hasModified = false;
+			    logger.info("The newest bill " + oldName
+				    + " is deleted.");
 			    reset();
 			    return;
 			}
@@ -644,7 +681,9 @@ public class RentManager extends JFrame {
 			try {
 			    Files.delete(toDelete.toPath());
 			} catch (IOException e2) {
-			    e2.printStackTrace();
+			    logger.log(Level.SEVERE,
+				    "Error occur when deleting the last file",
+				    e2);
 			}
 			rentHistory.getRentDataNames().removeLast();
 			try {
@@ -659,12 +698,17 @@ public class RentManager extends JFrame {
 			    buffer.close();
 			    file.close();
 			} catch (ClassNotFoundException | IOException e1) {
-			    e1.printStackTrace();
+			    logger.log(
+				    Level.SEVERE,
+				    "Error occur when loading the latest rent data",
+				    e1);
 			}
 			if (rentData == null) {
 			    DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 			    rentData = new RentData(root);
 			}
+			logger.info("The newest bill " + oldName
+				+ " is deleted.");
 			reset();
 		    }
 		}
@@ -672,38 +716,37 @@ public class RentManager extends JFrame {
 	}
     }
 
-    public void save() {
-	String name = path + "/data/" + rentData.getFilename();
-	File save = new File(name);
+    private void saveFile(String path, Object data) throws IOException {
+	OutputStream file = new FileOutputStream(path);
+	OutputStream buffer = new BufferedOutputStream(file);
+	ObjectOutputStream out = new ObjectOutputStream(buffer);
+	out.writeObject(data);
+	out.close();
+    }
+
+    public boolean save() {
+	String filePath = path + "/data/" + rentData.getFilename();
 	boolean isInNewMonth = rentHistory.isInNewMonth(rentData);
 	if (isInNewMonth)
 	    rentHistory.getRentDataNames().add(rentData.getFilename());
 	try {
-	    OutputStream file = new FileOutputStream(save);
-	    OutputStream buffer = new BufferedOutputStream(file);
-	    ObjectOutputStream out = new ObjectOutputStream(buffer);
-	    out.writeObject(rentData);
-	    out.flush();
+	    saveFile(filePath, rentData);
 	    if (isInNewMonth) {
-		file = new FileOutputStream(path + "/data/rent_history.ser");
-		buffer = new BufferedOutputStream(file);
-		out = new ObjectOutputStream(buffer);
-		out.writeObject(rentHistory);
+		saveFile(path + "/data/rent_history.ser", rentHistory);
 	    }
-	    out.close();
 	    setHasModified(false);
 	    JOptionPane.showMessageDialog(RentManager.this,
 		    getString("message.save.success"));
 	} catch (IOException ext) {
-	    ext.printStackTrace();
-	    JOptionPane.showMessageDialog(RentManager.this,
-		    getString("exception.io"));
-	    return;
+	    logger.log(Level.SEVERE, "Error occur when saving the bill", ext);
+	    JOptionPane.showMessageDialog(RentManager.this, ("exception.io"));
+	    return false;
 	}
+	return true;
     }
 
     public boolean export(File path) {
-	File export = new File(path.getAbsolutePath() + "/"
+	File export = new File(path.getAbsolutePath() + '\\'
 		+ rentData.getTextFilename());
 	String month = rentData.getDataMonth();
 	try {
@@ -715,7 +758,6 @@ public class RentManager extends JFrame {
 		String buildingAdd = bldg.getAddress();
 		double waterPrice = bldg.getWaterPrice();
 		double electPrice = bldg.getElectricityPrice();
-		String cleanPrice = bldg.getCleaningPrice() + "";
 		String internetPrice = bldg.getInternetPrice() + "";
 		String acPrice = bldg.getAcPrice() + "";
 		int rowCount = btm.getRowCount();
@@ -737,6 +779,7 @@ public class RentManager extends JFrame {
 		    String usedElect = room.getElectricityUsed() + "";
 		    String elect = (room.getElectricityUsed() * electPrice)
 			    + "";
+		    String cleanPrice = room.getCleaningPrice() + "";
 		    String internet = (room.isUseInternet()) ? internetPrice
 			    : "0";
 		    String ac = (room.isUseAC()) ? acPrice : "0";
@@ -753,10 +796,14 @@ public class RentManager extends JFrame {
 		ps.close();
 	    }
 	} catch (IOException ext) {
+	    logger.log(Level.SEVERE, "Error occur when exporting text file",
+		    ext);
 	    JOptionPane.showMessageDialog(this,
 		    getString("message.cannot.export"));
 	    return false;
 	}
+	logger.info("Text file of the bill " + rentData.getTextFilename()
+		+ " is exported.");
 	return true;
     }
 
@@ -787,7 +834,7 @@ public class RentManager extends JFrame {
     public InfoPanel getInfoPanel() {
 	return infoPanel;
     }
-    
+
     public Locale getLocale() {
 	return locale;
     }
@@ -806,8 +853,19 @@ public class RentManager extends JFrame {
     }
 
     public static void main(String[] args) {
+	logger.setLevel(Level.ALL);
+	try {
+	    FileHandler handler = new FileHandler("./rentLog.log", true);
+	    handler.setFormatter(new SimpleFormatter());
+	    logger.addHandler(handler);
+	} catch (SecurityException e) {
+	    e.printStackTrace();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
 	SwingUtilities.invokeLater(new Runnable() {
 	    public void run() {
+		logger.info("RentManager_" + VERSION + " starts launching.");
 		new RentManager();
 	    }
 	});

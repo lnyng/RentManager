@@ -181,6 +181,11 @@ public class BillTable extends JTable implements Popuppable {
 		    }
 		    room.setCleaningPrice(cleaningPrice);
 		}
+		if (col != -1)
+		    RentManager.logger.info("Bill table ["
+			    + room.getBuilding().getName() + "] changed. (Row "
+			    + firstRow + ", Col " + col + ") -> "
+			    + row[col].toString());
 		rentManager.getTreePanel().getTree()
 			.setSelectionPath(TreePanel.getPathToRoot(room));
 		rentManager.getInfoPanel().updateCurrPanel();
@@ -263,8 +268,10 @@ public class BillTable extends JTable implements Popuppable {
 	Point p = rect.getLocation();
 	int hitRowIndex = rowAtPoint(p);
 	Room room = (Room) getModel().getRow(hitRowIndex)[BillTableModel.ROOM];
-	if(feedBack.equals(room.getOtherFeeNote()))
+	if (feedBack.equals(room.getOtherFeeNote()))
 	    return;
+	RentManager.logger.info("Room [" + room.toString()
+		+ "] has its note for the other fee updated.");
 	room.setOtherFeeNote((String) feedBack);
 	rentManager.setHasModified(true);
     }
