@@ -72,7 +72,7 @@ import com.qiniu.api.rs.URLUtils;
 @SuppressWarnings("serial")
 public class RentManager extends JFrame {
 
-    public static final String VERSION = "1.6.0";
+    public static final String VERSION = "1.6.1";
     public static RentManager rm;
     private Class<?> cls;
     private static String username;
@@ -531,14 +531,18 @@ public class RentManager extends JFrame {
 			    JOptionPane.showMessageDialog(RentManager.this,
 				    RentManagerMain
 					    .getString("message.fail.to.save"));
+			    RentManagerMain.logger
+				    .info("Failed to save data before backup. Backup fails.");
 			    return;
 			}
 		    }
 		}
+		RentManagerMain.logger.info("Start to backup data for user "
+			+ username + ".");
 		Mac mac = new Mac(Config.ACCESS_KEY, Config.SECRET_KEY);
 		String bucketName = "rentmanager";
 		PutPolicy putPolicy = new PutPolicy(bucketName);
-		String key = username + ".zip";
+		String key = "backup_" + username + ".zip";
 		RSClient client = new RSClient(mac);
 		Entry statRet = null;
 		try {
@@ -567,15 +571,21 @@ public class RentManager extends JFrame {
 			    RentManagerMain.getString("title.message"),
 			    JOptionPane.YES_NO_OPTION);
 		    if (result != JOptionPane.YES_OPTION) {
+			RentManagerMain.logger.info("User stops backup.");
 			return;
 		    }
+		    RentManagerMain.logger.info("Cloud backup performaned on "
+			    + putDate + " will be overwritten.");
 		}
 
 		String uptoken = null;
 		try {
 		    uptoken = putPolicy.token(mac);
-		} catch (AuthException | JSONException e1) {
-		    e1.printStackTrace();
+		} catch (AuthException | JSONException ext) {
+		    RentManagerMain.logger
+			    .log(Level.SEVERE,
+				    "Error occur when trying to get the upload token for backup.",
+				    ext);
 		    return;
 		}
 		PutExtra extra = new PutExtra();
@@ -583,17 +593,21 @@ public class RentManager extends JFrame {
 		try {
 		    BufferedInputStream origin = null;
 		    FileOutputStream dest = new FileOutputStream(path
-			    + "/data/" + username + "/backup.zip");
+			    + "/data/" + username + "/backup_" + username
+			    + ".zip");
 		    ZipOutputStream out = new ZipOutputStream(
 			    new BufferedOutputStream(dest));
 		    byte data[] = new byte[BUFFER];
 		    File f = new File(path + "/data/" + username);
 		    String files[] = f.list();
 		    for (int i = 0; i < files.length; i++) {
-			if (files[i].equals("backup.zip"))
+			if (files[i].contains(".zip"))
 			    continue;
-			FileInputStream fi = new FileInputStream(path
-				+ "/data/" + username + "/" + files[i]);
+			File input = new File(path + "/data/" + username + "/"
+				+ files[i]);
+			if (input.isDirectory())
+			    continue;
+			FileInputStream fi = new FileInputStream(input);
 			origin = new BufferedInputStream(fi, BUFFER);
 			ZipEntry entry = new ZipEntry(files[i]);
 			out.putNextEntry(entry);
@@ -614,10 +628,12 @@ public class RentManager extends JFrame {
 				    .getString("message.fail.to.backup"));
 		    return;
 		}
+		RentManagerMain.logger
+			.info("The zip file of user data is created.");
 		InputStream inputStream = null;
 		try {
 		    inputStream = new FileInputStream(path + "/data/"
-			    + username + "/backup.zip");
+			    + username + "/backup_" + username + ".zip");
 		    IoApi.Put(uptoken, key, inputStream, extra);
 		    inputStream.close();
 		} catch (IOException ext) {
@@ -630,12 +646,16 @@ public class RentManager extends JFrame {
 				    .getString("message.fail.to.backup"));
 		    return;
 		}
+		RentManagerMain.logger.info("Backup succeeded.");
 		JOptionPane.showMessageDialog(RentManager.rm,
 			RentManagerMain.getString("message.backup.success"));
 	    } else if (source.equals(mi_sync)) {
+		RentManagerMain.logger
+			.info("Start to synchronize data for user " + username
+				+ ".");
 		Mac mac = new Mac(Config.ACCESS_KEY, Config.SECRET_KEY);
 		String bucketName = "rentmanager";
-		String key = username + ".zip";
+		String key = "backup_" + username + ".zip";
 		RSClient client = new RSClient(mac);
 		Entry statRet = null;
 		try {
@@ -664,13 +684,20 @@ public class RentManager extends JFrame {
 			    RentManagerMain.getString("title.message"),
 			    JOptionPane.YES_NO_OPTION);
 		    if (result != JOptionPane.YES_OPTION) {
+			RentManagerMain.logger
+				.info("User stops synchronization.");
 			return;
 		    }
+		    RentManagerMain.logger.info("Backup backup_" + username
+			    + " starts to overwrite local data.");
 		} else {
 		    JLabel message = new JLabel("<html><p style='width:200px'>"
-			    + RentManagerMain.getString("message.sync.info")
-			    + "</html>");
+			    + MessageFormat.format(RentManagerMain
+				    .getString("message.backup.not.exist"),
+				    "backup_" + username) + "</html>");
 		    JOptionPane.showMessageDialog(RentManager.rm, message);
+		    RentManagerMain.logger.info("Backup backup_" + username
+			    + " does not exist. Synchronization fails.");
 		    return;
 		}
 
@@ -694,6 +721,9 @@ public class RentManager extends JFrame {
 				    ext);
 		    return;
 		}
+		RentManagerMain.logger
+			.info("Got the download address of the backup file.");
+
 		try {
 		    URL website = new URL(downloadUrl);
 		    ReadableByteChannel rbc = Channels.newChannel(website
@@ -721,6 +751,7 @@ public class RentManager extends JFrame {
 				    ext);
 		    return;
 		}
+		RentManagerMain.logger.info("Backup file downloaded.");
 
 		try {
 		    final int BUFFER = 2048;
@@ -749,12 +780,14 @@ public class RentManager extends JFrame {
 			    ext);
 		    return;
 		}
+		RentManagerMain.logger.info("Backup file unzipped.");
 		loadRentData();
 		File tmp = new File(path + "/data/" + username + "/tmp.zip");
 		if (tmp.exists())
 		    tmp.delete();
 		JOptionPane.showMessageDialog(RentManager.rm,
 			RentManagerMain.getString("message.sync.success"));
+		RentManagerMain.logger.info("Synchronization succeeded.");
 	    } else if (source.equals(mi_exit)) {
 		if (hasModified) {
 		    int result = JOptionPane.showConfirmDialog(

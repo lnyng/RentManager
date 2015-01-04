@@ -1,3 +1,7 @@
+RentManager-1.6.1
+	+) Fixed bug of failing to sync when user name is null.
+	+) Added logging to backup/sync.
+
 RentManager-1.6.0
 	+) Added cloud backup/synchronize function (testing).
 	+) Added the skeleton of login function.
