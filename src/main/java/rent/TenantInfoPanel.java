@@ -50,14 +50,14 @@ public class TenantInfoPanel extends ElementInfoPanel {
 	ta_note.addFocusListener(til);
 
 	JLabel l_icon = new JLabel(rentManager.tenantIcon);
-	JLabel l_name = new JLabel(rentManager.getString("label.tenant.name"));
-	JLabel l_room = new JLabel(rentManager.getString("label.tenant.room"));
-	JLabel l_id = new JLabel(rentManager.getString("label.tenant.id"));
-	JLabel l_phone = new JLabel(rentManager.getString("label.tenant.phone"));
+	JLabel l_name = new JLabel(RentManagerMain.getString("label.tenant.name"));
+	JLabel l_room = new JLabel(RentManagerMain.getString("label.tenant.room"));
+	JLabel l_id = new JLabel(RentManagerMain.getString("label.tenant.id"));
+	JLabel l_phone = new JLabel(RentManagerMain.getString("label.tenant.phone"));
 	JLabel l_signer = new JLabel(
-		rentManager.getString("label.tenant.is.signer"));
+		RentManagerMain.getString("label.tenant.is.signer"));
 	JLabel l_contractStart = new JLabel(
-		rentManager.getString("label.tenant.contract.start"));
+		RentManagerMain.getString("label.tenant.contract.start"));
 
 	cb_signer.addItemListener(til);
 
@@ -199,8 +199,7 @@ public class TenantInfoPanel extends ElementInfoPanel {
 	c.insets = new Insets(5, 0, 10, 5);
 	add(cb_signer, c);
 
-	TitledBorder tb_note = BorderFactory.createTitledBorder(rentManager
-		.getString("border.title.note"));
+	TitledBorder tb_note = BorderFactory.createTitledBorder(RentManagerMain.getString("border.title.note"));
 	JScrollPane sp_note = new JScrollPane(ta_note);
 	ta_note.setLineWrap(true);
 	ta_note.setWrapStyleWord(true);
@@ -237,12 +236,12 @@ public class TenantInfoPanel extends ElementInfoPanel {
 
 	String oldValue;
 
-	@Override
+	
 	public void itemStateChanged(ItemEvent e) {
 	    if (isUpdatingInfo)
 		return;
 	    if (e.getSource().equals(cb_signer)) {
-		RentManager.logger.info("Tenant [" + currTenant.toString()
+		RentManagerMain.logger.info("Tenant [" + currTenant.toString()
 			+ "] is set as the contract signer of room "
 			+ currTenant.getParent().toString() + ".");
 		cb_signer.setEnabled(false);
@@ -254,7 +253,7 @@ public class TenantInfoPanel extends ElementInfoPanel {
 	    rentManager.setHasModified(true);
 	}
 
-	@Override
+	
 	public void focusGained(FocusEvent e) {
 	    if (!rentManager.isGlobalEditable())
 		return;
@@ -271,7 +270,7 @@ public class TenantInfoPanel extends ElementInfoPanel {
 	    oldValue = comp.getText();
 	}
 
-	@Override
+	
 	public void focusLost(FocusEvent e) {
 	    if (!rentManager.isGlobalEditable())
 		return;
@@ -286,7 +285,7 @@ public class TenantInfoPanel extends ElementInfoPanel {
 	    if (newValue.equals(oldValue))
 		return;
 	    if (comp.equals(tf_name)) {
-		RentManager.logger.info("The name of tenant ["
+		RentManagerMain.logger.info("The name of tenant ["
 			+ currTenant.toString() + "] at room ["
 			+ currTenant.getParent().toString()
 			+ "] has been updated from " + oldValue + " to "
@@ -302,14 +301,14 @@ public class TenantInfoPanel extends ElementInfoPanel {
 			    .updateTenant(currTenant);
 		}
 	    } else if (comp.equals(tf_id)) {
-		RentManager.logger.info("The ID of tenant ["
+		RentManagerMain.logger.info("The ID of tenant ["
 			+ currTenant.toString() + "] at room ["
 			+ currTenant.getParent().toString()
 			+ "] has been updated from " + oldValue + " to "
 			+ newValue + ".");
 		currTenant.setId(newValue);
 	    } else if (comp.equals(tf_phone)) {
-		RentManager.logger.info("The phone number of tenant ["
+		RentManagerMain.logger.info("The phone number of tenant ["
 			+ currTenant.toString() + "] at room ["
 			+ currTenant.getParent().toString()
 			+ "] has been updated from " + oldValue + " to "
@@ -324,14 +323,14 @@ public class TenantInfoPanel extends ElementInfoPanel {
 		    tf_contractStart.setText(oldValue);
 		    return;
 		}
-		RentManager.logger.info("The contract start date of tenant ["
+		RentManagerMain.logger.info("The contract start date of tenant ["
 			+ currTenant.toString() + "] at room ["
 			+ currTenant.getParent().toString()
 			+ "] has been updated from " + oldValue + " to "
 			+ newValue + ".");
 		((Room) currTenant.getParent()).setContractChangeDate(newDate);
 	    } else if (comp.equals(ta_note)) {
-		RentManager.logger.info("The note of tenant [" + currTenant.toString()
+		RentManagerMain.logger.info("The note of tenant [" + currTenant.toString()
 			+ "] at room [" + currTenant.getParent().toString()
 			+ "] has been updated.");
 		currTenant.setNote(newValue);
@@ -340,7 +339,7 @@ public class TenantInfoPanel extends ElementInfoPanel {
 	}
     }
 
-    @Override
+    
     public void updateInfo(Object element) {
 	isUpdatingInfo = true;
 	currTenant = (Tenant) element;
@@ -369,7 +368,7 @@ public class TenantInfoPanel extends ElementInfoPanel {
 	isUpdatingInfo = false;
     }
 
-    @Override
+    
     public void updateInfo() {
 	updateInfo(currTenant);
     }

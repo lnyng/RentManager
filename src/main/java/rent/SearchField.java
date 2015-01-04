@@ -34,34 +34,34 @@ public class SearchField extends JTextField {
 	b_search = button;
 	sortedTenants = new TreeMap<Difference, Tenant>(
 		new Comparator<Difference>() {
-		    @Override
+		    
 		    public int compare(Difference o1, Difference o2) {
 			return o1.compareTo(o2);
 		    }
 		});
 	this.addFocusListener(new FocusListener() {
-	    @Override
+	    
 	    public void focusGained(FocusEvent e) {
 		SearchField.this.selectAll();
 	    }
 
-	    @Override
+	    
 	    public void focusLost(FocusEvent e) {
 	    }
 	});
 	this.addKeyListener(new KeyListener() {
-	    @Override
+	    
 	    public void keyTyped(KeyEvent e) {
 	    }
 
-	    @Override
+	    
 	    public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 		    b_search.doClick();
 		}
 	    }
 
-	    @Override
+	    
 	    public void keyReleased(KeyEvent e) {
 
 	    }
@@ -85,7 +85,7 @@ public class SearchField extends JTextField {
 	    return name;
 	}
 
-	@Override
+	
 	public int compareTo(Difference o) {
 	    if (difference == o.getDifference()) {
 		return name.compareTo(o.getName());
@@ -243,7 +243,7 @@ public class SearchField extends JTextField {
 	JPopupMenu pm_search = new JPopupMenu();
 	if (sortedTenants.isEmpty()) {
 	    JMenuItem noResult = new JMenuItem(
-		    RentManager.rm.getString("message.no.relevant.result"));
+		    RentManagerMain.getString("message.no.relevant.result"));
 	    noResult.setEnabled(false);
 	    pm_search.add(noResult);
 	}
@@ -254,7 +254,7 @@ public class SearchField extends JTextField {
 			.pollFirstEntry();
 		JMenuItem mi_tenant = new JMenuItem(entry.getValue().toString());
 		mi_tenant.addActionListener(new ActionListener() {
-		    @Override
+		    
 		    public void actionPerformed(ActionEvent e) {
 			TreePath path = TreePanel.getPathToRoot(entry
 				.getValue());

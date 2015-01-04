@@ -68,7 +68,8 @@ public class BillTable extends JTable implements Popuppable {
 	    Object[] r = btm.getRow(row);
 	    Room room = (Room) r[BillTableModel.ROOM];
 	    if (col == BillTableModel.WATER) {
-		l.setToolTipText(rentManager.getString("tip.table.utilities")
+		l.setToolTipText(RentManagerMain
+			.getString("tip.table.utilities")
 			+ room.getWaterRecord());
 		if (r[col].equals(room.getWaterRecord()))
 		    l.setBackground(new Color(252, 188, 188));
@@ -81,7 +82,8 @@ public class BillTable extends JTable implements Popuppable {
 		    previousCol = col;
 		}
 	    } else if (col == BillTableModel.ELECTRICITY) {
-		l.setToolTipText(rentManager.getString("tip.table.utilities")
+		l.setToolTipText(RentManagerMain
+			.getString("tip.table.utilities")
 			+ room.getElectricityRecord());
 		if (r[col].equals(room.getElectricityRecord()))
 		    l.setBackground(new Color(252, 188, 188));
@@ -121,7 +123,6 @@ public class BillTable extends JTable implements Popuppable {
 	    ListSelectionListener {
 	private boolean isChangingTable = false;
 
-	@Override
 	public void tableChanged(TableModelEvent e) {
 	    if (isChangingTable)
 		return;
@@ -134,13 +135,13 @@ public class BillTable extends JTable implements Popuppable {
 		Object[] row = model.getRow(firstRow);
 		Room room = (Room) row[BillTableModel.ROOM];
 		if (col == BillTableModel.INTERNET) {
-		    room.setUseInternet((boolean) row[col]);
+		    room.setUseInternet((Boolean) row[col]);
 		} else if (col == BillTableModel.AC) {
-		    room.setUseAC((boolean) row[col]);
+		    room.setUseAC((Boolean) row[col]);
 		} else if (col == BillTableModel.WATER) {
-		    int waterUsed = (int) row[col] - room.getWaterRecord();
+		    int waterUsed = (Integer) row[col] - room.getWaterRecord();
 		    if (waterUsed < 0) {
-			String message = rentManager
+			String message = RentManagerMain
 				.getString("message.water.record.error");
 			JOptionPane.showMessageDialog(BillTable.this, message);
 			row[col] = room.getWaterRecord();
@@ -150,11 +151,10 @@ public class BillTable extends JTable implements Popuppable {
 		    }
 		    room.setWaterUsed(waterUsed);
 		} else if (col == BillTableModel.ELECTRICITY) {
-		    int electricityUsed = (int) row[col]
+		    int electricityUsed = (Integer) row[col]
 			    - room.getElectricityRecord();
 		    if (electricityUsed < 0) {
-			String message = rentManager
-				.getString("message.elect.record.error");
+			String message = RentManagerMain.getString("message.elect.record.error");
 			JOptionPane.showMessageDialog(BillTable.this, message);
 			row[col] = room.getElectricityRecord();
 			model.fireTableCellUpdated(firstRow, col);
@@ -163,7 +163,7 @@ public class BillTable extends JTable implements Popuppable {
 		    }
 		    room.setElectricityUsed(electricityUsed);
 		} else if (col == BillTableModel.OTHER_FEE) {
-		    int otherFee = (int) row[col];
+		    int otherFee = (Integer) row[col];
 		    if (otherFee < 0) {
 			row[col] = room.getOtherFee();
 			model.fireTableCellUpdated(firstRow, col);
@@ -172,7 +172,7 @@ public class BillTable extends JTable implements Popuppable {
 		    }
 		    room.setOtherFee(otherFee);
 		} else if (col == BillTableModel.CLEANING) {
-		    int cleaningPrice = (int) row[col];
+		    int cleaningPrice = (Integer) row[col];
 		    if (cleaningPrice < 0) {
 			row[col] = room.getCleaningPrice();
 			model.fireTableCellUpdated(firstRow, col);
@@ -182,7 +182,7 @@ public class BillTable extends JTable implements Popuppable {
 		    room.setCleaningPrice(cleaningPrice);
 		}
 		if (col != -1)
-		    RentManager.logger.info("Bill table ["
+		    RentManagerMain.logger.info("Bill table ["
 			    + room.getBuilding().getName() + "] changed. (Row "
 			    + firstRow + ", Col " + col + ") -> "
 			    + row[col].toString());
@@ -197,7 +197,7 @@ public class BillTable extends JTable implements Popuppable {
 	    isChangingTable = false;
 	}
 
-	@Override
+	
 	public void valueChanged(ListSelectionEvent e) {
 	    if (!e.getValueIsAdjusting()
 		    && !rentManager.getTreePanel().isChangingSelection()) {
@@ -221,7 +221,7 @@ public class BillTable extends JTable implements Popuppable {
     /**
      * A method similar to the getToolTipText
      */
-    @Override
+    
     public String getPopupText(MouseEvent event) {
 	String text = null;
 	Point p = event.getPoint();
@@ -241,7 +241,7 @@ public class BillTable extends JTable implements Popuppable {
 	return text;
     }
 
-    @Override
+    
     public Rectangle getActivatedRegion(MouseEvent event) {
 	Rectangle rect = null;
 	Point p = event.getPoint();
@@ -258,19 +258,19 @@ public class BillTable extends JTable implements Popuppable {
 	return rect;
     }
 
-    @Override
+    
     public JComponent getComponent() {
 	return this;
     }
 
-    @Override
+    
     public void feedBack(Rectangle rect, Object feedBack) {
 	Point p = rect.getLocation();
 	int hitRowIndex = rowAtPoint(p);
 	Room room = (Room) getModel().getRow(hitRowIndex)[BillTableModel.ROOM];
 	if (feedBack.equals(room.getOtherFeeNote()))
 	    return;
-	RentManager.logger.info("Room [" + room.toString()
+	RentManagerMain.logger.info("Room [" + room.toString()
 		+ "] has its note for the other fee updated.");
 	room.setOtherFeeNote((String) feedBack);
 	rentManager.setHasModified(true);

@@ -1,4 +1,5 @@
 package rent;
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -45,15 +46,13 @@ public class AddTenantPanel extends JPanel implements ElementsAdder {
 
     public AddTenantPanel() {
 	rentManager = RentManager.rm;
-	tf_name.setText(rentManager.getString("default.tenant.name"));
+	tf_name.setText(RentManagerMain.getString("default.tenant.name"));
 
 	FocusListener fl = new FocusListener() {
-	    @Override
 	    public void focusGained(FocusEvent e) {
 		((JTextComponent) e.getSource()).selectAll();
 	    }
 
-	    @Override
 	    public void focusLost(FocusEvent e) {
 	    }
 
@@ -64,7 +63,6 @@ public class AddTenantPanel extends JPanel implements ElementsAdder {
 	ta_note.addFocusListener(fl);
 
 	ItemListener il = new ItemListener() {
-	    @Override
 	    public void itemStateChanged(ItemEvent e) {
 		if (e.getSource().equals(cb_building)) {
 		    if (cb_building.getSelectedItem() != null) {
@@ -112,9 +110,11 @@ public class AddTenantPanel extends JPanel implements ElementsAdder {
 	cb_room.addItemListener(il);
 
 	JLabel l_icon = new JLabel(rentManager.tenantIcon);
-	JLabel l_name = new JLabel(rentManager.getString("label.tenant.name"));
-	JLabel l_id = new JLabel(rentManager.getString("label.tenant.id"));
-	JLabel l_phone = new JLabel(rentManager.getString("label.tenant.phone"));
+	JLabel l_name = new JLabel(
+		RentManagerMain.getString("label.tenant.name"));
+	JLabel l_id = new JLabel(RentManagerMain.getString("label.tenant.id"));
+	JLabel l_phone = new JLabel(
+		RentManagerMain.getString("label.tenant.phone"));
 
 	this.setLayout((new GridBagLayout()));
 	GridBagConstraints c = new GridBagConstraints();
@@ -176,9 +176,11 @@ public class AddTenantPanel extends JPanel implements ElementsAdder {
 	this.add(tf_phone, c);
 
 	JLabel l_building = new JLabel(
-		rentManager.getString("label.tenant.bldg"));
-	JLabel l_story = new JLabel(rentManager.getString("label.tenant.story"));
-	JLabel l_room = new JLabel(rentManager.getString("label.tenant.room"));
+		RentManagerMain.getString("label.tenant.bldg"));
+	JLabel l_story = new JLabel(
+		RentManagerMain.getString("label.tenant.story"));
+	JLabel l_room = new JLabel(
+		RentManagerMain.getString("label.tenant.room"));
 
 	c = new GridBagConstraints();
 	c.gridx = 0;
@@ -223,7 +225,7 @@ public class AddTenantPanel extends JPanel implements ElementsAdder {
 	this.add(cb_room, c);
 
 	JLabel l_isSign = new JLabel(
-		rentManager.getString("label.tenant.is.signer"));
+		RentManagerMain.getString("label.tenant.is.signer"));
 	c = new GridBagConstraints();
 	c.gridx = 0;
 	c.gridy = 4;
@@ -242,7 +244,7 @@ public class AddTenantPanel extends JPanel implements ElementsAdder {
 	this.add(cb_isSigner, c);
 
 	JLabel l_contract = new JLabel(
-		rentManager.getString("label.tenant.contract.start"));
+		RentManagerMain.getString("label.tenant.contract.start"));
 	c = new GridBagConstraints();
 	c.gridx = 0;
 	c.gridy = 5;
@@ -268,7 +270,7 @@ public class AddTenantPanel extends JPanel implements ElementsAdder {
 	c.gridwidth = 6;
 	c.fill = GridBagConstraints.BOTH;
 	c.insets = new Insets(10, 15, 15, 15);
-	TitledBorder tb_note = BorderFactory.createTitledBorder(rentManager
+	TitledBorder tb_note = BorderFactory.createTitledBorder(RentManagerMain
 		.getString("border.title.note"));
 	JScrollPane sp_note = new JScrollPane(ta_note);
 	sp_note.setMinimumSize(new Dimension(0, 79));
@@ -294,13 +296,13 @@ public class AddTenantPanel extends JPanel implements ElementsAdder {
 	} catch (ParseException e) {
 	    e.printStackTrace();
 	    JOptionPane.showMessageDialog(rentManager,
-		    rentManager.getString("message.date.format.error"));
+		    RentManagerMain.getString("message.date.format.error"));
 	    return false;
 	}
 	if (room.getContractChangeDate() != null) {
 	    if (contractStartDate.compareTo(room.getContractChangeDate()) < 0) {
-		JOptionPane.showMessageDialog(this,
-			rentManager.getString("message.contract.date.error"));
+		JOptionPane.showMessageDialog(this, RentManagerMain
+			.getString("message.contract.date.error"));
 		return false;
 	    }
 	}
@@ -326,7 +328,7 @@ public class AddTenantPanel extends JPanel implements ElementsAdder {
     public MutableTreeNode getNewElement() {
 	return newTenant;
     }
-    
+
     public void setTenantName(String name) {
 	tf_name.setText(name);
     }

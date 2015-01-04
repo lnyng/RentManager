@@ -1,3 +1,7 @@
+RentManager-1.6.0
+	+) Added cloud backup/synchronize function (testing).
+	+) Added the skeleton of login function.
+
 RentManager-1.5.0
 	+) Improved search performance.
 	+) Fixed the bug of only rounding down the numbers

@@ -61,21 +61,21 @@ public class BuildingInfoPanel extends ElementInfoPanel {
 	tf_acPrice.setMinimumSize(tf_acPrice.getPreferredSize());
 
 	JLabel l_icon = new JLabel(rentManager.buildingIcon);
-	JLabel l_name = new JLabel(rentManager.getString("label.bldg.name"));
+	JLabel l_name = new JLabel(RentManagerMain.getString("label.bldg.name"));
 	JLabel l_numberStories = new JLabel(
-		rentManager.getString("label.bldg.num.stories"));
+		RentManagerMain.getString("label.bldg.num.stories"));
 	JLabel l_address = new JLabel(
-		rentManager.getString("label.bldg.address"));
+		RentManagerMain.getString("label.bldg.address"));
 	JLabel l_electricityPrice = new JLabel(
-		rentManager.getString("label.bldg.elect.price"));
+		RentManagerMain.getString("label.bldg.elect.price"));
 	JLabel l_waterPrice = new JLabel(
-		rentManager.getString("label.bldg.water.price"));
+		RentManagerMain.getString("label.bldg.water.price"));
 	JLabel l_cleaningPrice = new JLabel(
-		rentManager.getString("label.bldg.clean.price"));
+		RentManagerMain.getString("label.bldg.clean.price"));
 	JLabel l_internetPrice = new JLabel(
-		rentManager.getString("label.bldg.internet.price"));
+		RentManagerMain.getString("label.bldg.internet.price"));
 	JLabel l_acPrice = new JLabel(
-		rentManager.getString("label.bldg.ac.price"));
+		RentManagerMain.getString("label.bldg.ac.price"));
 
 	this.setLayout(new GridBagLayout());
 	GridBagConstraints c = new GridBagConstraints();
@@ -236,8 +236,9 @@ public class BuildingInfoPanel extends ElementInfoPanel {
 	c.anchor = GridBagConstraints.LINE_START;
 	p_price.add(tf_acPrice, c);
 
-	TitledBorder tb_price = BorderFactory.createTitledBorder(rentManager
-		.getString("border.title.prices"));
+	TitledBorder tb_price = BorderFactory
+		.createTitledBorder(RentManagerMain
+			.getString("border.title.prices"));
 	p_price.setBorder(tb_price);
 
 	c = new GridBagConstraints();
@@ -251,7 +252,7 @@ public class BuildingInfoPanel extends ElementInfoPanel {
 	c.insets = new Insets(0, 0, 10, 10);
 	add(p_price, c);
 
-	TitledBorder tb_info = BorderFactory.createTitledBorder(rentManager
+	TitledBorder tb_info = BorderFactory.createTitledBorder(RentManagerMain
 		.getString("border.title.info"));
 	ta_info.setBorder(tb_info);
 	ta_info.setOpaque(false);
@@ -290,7 +291,7 @@ public class BuildingInfoPanel extends ElementInfoPanel {
     class BuildingInfoListener implements FocusListener {
 	String oldValue = "";
 
-	@Override
+	
 	public void focusGained(FocusEvent e) {
 	    if (!rentManager.isGlobalEditable())
 		return;
@@ -301,7 +302,7 @@ public class BuildingInfoPanel extends ElementInfoPanel {
 	    oldValue = comp.getText();
 	}
 
-	@Override
+	
 	public void focusLost(FocusEvent e) {
 	    if (!rentManager.isGlobalEditable())
 		return;
@@ -328,7 +329,7 @@ public class BuildingInfoPanel extends ElementInfoPanel {
 		    tm.insertNodeInto(currBuilding, rentManager.getRoot(),
 			    oldIndex);
 		    tf_name.setText(oldValue);
-		    String message = rentManager
+		    String message = RentManagerMain
 			    .getString("message.name.already.exist");
 		    rentManager
 			    .getTreePanel()
@@ -342,7 +343,7 @@ public class BuildingInfoPanel extends ElementInfoPanel {
 		Component select = tp.getSelectedComponent();
 		tp.remove(oldIndex);
 		tp.insertTab(newValue, null, select,
-			rentManager.getString("tip.bldg"), newIndex);
+			RentManagerMain.getString("tip.bldg"), newIndex);
 	    } else if (comp.equals(tf_numberStories)) {
 		int numStories = 0;
 		try {
@@ -361,7 +362,7 @@ public class BuildingInfoPanel extends ElementInfoPanel {
 			    .getChildAt(currBuilding.getChildCount() - 1);
 		    if (numStories < topStory.getStoryNumber()) {
 			tf_numberStories.setText(oldValue);
-			String message = rentManager
+			String message = RentManagerMain
 				.getString("message.story.num.error");
 			JOptionPane.showMessageDialog(rentManager, message);
 			return;
@@ -453,7 +454,7 @@ public class BuildingInfoPanel extends ElementInfoPanel {
 	}
     }
 
-    @Override
+    
     public void updateInfo(Object element) {
 	isUpdatingInfo = true;
 	currBuilding = (Building) element;
@@ -484,14 +485,14 @@ public class BuildingInfoPanel extends ElementInfoPanel {
 	    }
 	}
 	String text = MessageFormat.format(
-		rentManager.getString("message.bldg.info"),
+		RentManagerMain.getString("message.bldg.info"),
 		currBuilding.getName(), numStories, numRooms, numOccupied,
 		numTenants, waterUsed, electricityUsed);
 	ta_info.setText(text);
 	isUpdatingInfo = false;
     }
 
-    @Override
+    
     public void updateInfo() {
 	updateInfo(currBuilding);
     }

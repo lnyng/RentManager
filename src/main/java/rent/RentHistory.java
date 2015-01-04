@@ -1,4 +1,5 @@
 package rent;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,7 +40,8 @@ public class RentHistory implements Serializable {
 	    ClassNotFoundException {
 	if (rentDataNames.size() == 0)
 	    return null;
-	File f = new File("data/" + rentDataNames.get(index));
+	File f = new File(RentManager.path + "/data/"
+		+ RentManager.getUsername() + "/" + rentDataNames.get(index));
 	InputStream file = new FileInputStream(f);
 	InputStream buffer = new BufferedInputStream(file);
 	ObjectInput input = new ObjectInputStream(buffer);
@@ -58,7 +60,8 @@ public class RentHistory implements Serializable {
     public ArrayList<String> getMissingFiles() {
 	ArrayList<String> missing = new ArrayList<String>();
 	for (String name : rentDataNames) {
-	    File file = new File("data/" + name);
+	    File file = new File(RentManager.path + "/data/"
+		    + RentManager.getUsername() + "/" + name);
 	    if (!file.exists())
 		missing.add(name);
 	}

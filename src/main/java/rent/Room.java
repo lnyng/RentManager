@@ -200,50 +200,50 @@ public class Room implements MutableTreeNode, Serializable {
 	return roomNumber + "";
     }
 
-    @Override
+    
     public TreeNode getChildAt(int childIndex) {
 	if (childIndex > currTenants.size() - 1)
 	    return null;
 	return currTenants.get(childIndex);
     }
 
-    @Override
+    
     public int getChildCount() {
 	return currTenants.size();
     }
 
-    @Override
+    
     public TreeNode getParent() {
 	return story;
     }
 
-    @Override
+    
     public int getIndex(TreeNode node) {
 	return currTenants.indexOf(node);
     }
 
-    @Override
+    
     public boolean getAllowsChildren() {
 	return true;
     }
 
-    @Override
+    
     public boolean isLeaf() {
 	return currTenants.size() == 0;
     }
 
-    @Override
+    
     public Enumeration<Tenant> children() {
 	return Collections.enumeration(currTenants);
     }
 
-    @Override
+    
     public void insert(MutableTreeNode child, int index) {
 	currTenants.add(index, (Tenant) child);
 	child.setParent(this);
     }
 
-    @Override
+    
     public void remove(int index) {
 	Tenant removed = currTenants.remove(index);
 	if (getChildCount() == 0)
@@ -253,23 +253,23 @@ public class Room implements MutableTreeNode, Serializable {
 	}
     }
 
-    @Override
+    
     public void remove(MutableTreeNode node) {
 	currTenants.remove(node);
     }
 
-    @Override
+    
     public void setUserObject(Object object) {
 	return;
     }
 
-    @Override
+    
     public void removeFromParent() {
 	story.remove(this);
 	story = null;
     }
 
-    @Override
+    
     public void setParent(MutableTreeNode newParent) {
 	story = (Building.Story) newParent;
 	storyNumber = story.getStoryNumber();

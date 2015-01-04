@@ -7,13 +7,11 @@ import javax.swing.JTextArea;
 
 @SuppressWarnings("serial")
 public class StoryInfoPanel extends ElementInfoPanel {
-    private RentManager rentManager;
     private Building.Story currStory;
     private JTextArea ta_story = new JTextArea();
 
     public StoryInfoPanel() {
 	setLayout(new BorderLayout());
-	rentManager = RentManager.rm;
 	ta_story.setFont(getFont().deriveFont(16f));
 	ta_story.setEditable(false);
 	ta_story.setOpaque(false);
@@ -22,7 +20,7 @@ public class StoryInfoPanel extends ElementInfoPanel {
 	add(ta_story, BorderLayout.CENTER);
     }
 
-    @Override
+    
     public void updateInfo(Object element) {
 	currStory = (Building.Story) element;
 	int storyNumber = currStory.getStoryNumber();
@@ -40,12 +38,12 @@ public class StoryInfoPanel extends ElementInfoPanel {
 		numOccupied++;
 	}
 	String text = MessageFormat.format(
-		rentManager.getString("message.story.info"), storyNumber,
+		RentManagerMain.getString("message.story.info"), storyNumber,
 		numRooms, numTenants, numOccupied, waterUsed, electricityUsed);
 	ta_story.setText(text);
     }
 
-    @Override
+    
     public void updateInfo() {
 	updateInfo(currStory);
     }

@@ -1,4 +1,5 @@
 package rent;
+
 import java.awt.CardLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -37,16 +38,14 @@ public class AddRoomPanel extends JPanel implements ElementsAdder {
 
     public AddRoomPanel() {
 	this.rentManager = RentManager.rm;
-	rb_addMultiRooms.setText(rentManager
+	rb_addMultiRooms.setText(RentManagerMain
 		.getString("button.add.multi.rooms"));
-	rb_addOneRoom.setText(rentManager.getString("button.add.one.room"));
+	rb_addOneRoom.setText(RentManagerMain.getString("button.add.one.room"));
 	FocusListener fl = new FocusListener() {
-	    @Override
 	    public void focusGained(FocusEvent e) {
 		((JTextComponent) e.getSource()).selectAll();
 	    }
 
-	    @Override
 	    public void focusLost(FocusEvent e) {
 	    }
 
@@ -67,18 +66,19 @@ public class AddRoomPanel extends JPanel implements ElementsAdder {
 	ButtonGroup group = new ButtonGroup();
 	group.add(rb_addOneRoom);
 	group.add(rb_addMultiRooms);
-	JLabel l_building = new JLabel(rentManager.getString("label.room.bldg"));
+	JLabel l_building = new JLabel(
+		RentManagerMain.getString("label.room.bldg"));
 	JLabel l_startStory = new JLabel(
-		rentManager.getString("label.room.start.story"));
+		RentManagerMain.getString("label.room.start.story"));
 	JLabel l_endStory = new JLabel(
-		rentManager.getString("label.room.end.story"));
+		RentManagerMain.getString("label.room.end.story"));
 	JLabel l_roomsEachStory = new JLabel(
-		rentManager.getString("label.room.rooms.each.story"));
+		RentManagerMain.getString("label.room.rooms.each.story"));
 	JLabel l_roomNumber = new JLabel(
-		rentManager.getString("label.room.num"));
-	JLabel l_rent = new JLabel(rentManager.getString("label.room.rent"));
+		RentManagerMain.getString("label.room.num"));
+	JLabel l_rent = new JLabel(RentManagerMain.getString("label.room.rent"));
 	JLabel l_deposit = new JLabel(
-		rentManager.getString("label.room.deposit"));
+		RentManagerMain.getString("label.room.deposit"));
 
 	this.setLayout(new GridBagLayout());
 	GridBagConstraints c = new GridBagConstraints();
@@ -257,12 +257,12 @@ public class AddRoomPanel extends JPanel implements ElementsAdder {
 	    }
 	    int storyNumber = roomNumber / 100;
 	    if (storyNumber > building.getNumberStories()) {
-		String message = rentManager
+		String message = RentManagerMain
 			.getString("message.not.enough.stories");
 		int result = JOptionPane.showConfirmDialog(this,
 			"<html><body><p style='width:200px'>" + message
 				+ "</p></body></html>",
-			rentManager.getString("title.message"),
+			RentManagerMain.getString("title.message"),
 			JOptionPane.YES_NO_OPTION);
 		if (result == JOptionPane.OK_OPTION)
 		    building.setNumberStories(storyNumber);
@@ -298,12 +298,12 @@ public class AddRoomPanel extends JPanel implements ElementsAdder {
 		return false;
 	    }
 	    if (endStory > building.getNumberStories()) {
-		String message = rentManager
+		String message = RentManagerMain
 			.getString("message.not.enough.stories.multi.rooms");
 		int result = JOptionPane.showConfirmDialog(this,
 			"<html><body><p style='width:200px'>" + message
 				+ "</p></body></html>",
-			rentManager.getString("title.message"),
+			RentManagerMain.getString("title.message"),
 			JOptionPane.YES_NO_OPTION);
 		if (result == JOptionPane.OK_OPTION)
 		    building.setNumberStories(endStory);

@@ -1,4 +1,5 @@
 package rent;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -30,16 +31,14 @@ public class AddBuildingPanel extends JPanel implements ElementsAdder {
 
     public AddBuildingPanel() {
 	rentManager = RentManager.rm;
-	tf_name.setText(rentManager.getString("default.bldg.name"));
-	tf_address.setText(rentManager.getString("default.bldg.address"));
+	tf_name.setText(RentManagerMain.getString("default.bldg.name"));
+	tf_address.setText(RentManagerMain.getString("default.bldg.address"));
 
 	FocusListener fl = new FocusListener() {
-	    @Override
 	    public void focusGained(FocusEvent e) {
 		((JTextComponent) e.getSource()).selectAll();
 	    }
 
-	    @Override
 	    public void focusLost(FocusEvent e) {
 	    }
 
@@ -54,21 +53,21 @@ public class AddBuildingPanel extends JPanel implements ElementsAdder {
 	tf_acPrice.addFocusListener(fl);
 
 	JLabel l_icon = new JLabel(rentManager.buildingIcon);
-	JLabel l_name = new JLabel(rentManager.getString("label.bldg.name"));
+	JLabel l_name = new JLabel(RentManagerMain.getString("label.bldg.name"));
 	JLabel l_numberStories = new JLabel(
-		rentManager.getString("label.bldg.num.stories"));
+		RentManagerMain.getString("label.bldg.num.stories"));
 	JLabel l_address = new JLabel(
-		rentManager.getString("label.bldg.address"));
+		RentManagerMain.getString("label.bldg.address"));
 	JLabel l_electricityPrice = new JLabel(
-		rentManager.getString("label.bldg.elect.price"));
+		RentManagerMain.getString("label.bldg.elect.price"));
 	JLabel l_waterPrice = new JLabel(
-		rentManager.getString("label.bldg.water.price"));
+		RentManagerMain.getString("label.bldg.water.price"));
 	JLabel l_cleaningPrice = new JLabel(
-		rentManager.getString("label.bldg.clean.price"));
+		RentManagerMain.getString("label.bldg.clean.price"));
 	JLabel l_internetPrice = new JLabel(
-		rentManager.getString("label.bldg.internet.price"));
+		RentManagerMain.getString("label.bldg.internet.price"));
 	JLabel l_acPrice = new JLabel(
-		rentManager.getString("label.bldg.ac.price"));
+		RentManagerMain.getString("label.bldg.ac.price"));
 
 	this.setLayout(new GridBagLayout());
 	GridBagConstraints c = new GridBagConstraints();
@@ -197,8 +196,9 @@ public class AddBuildingPanel extends JPanel implements ElementsAdder {
 	c.anchor = GridBagConstraints.LINE_START;
 	p_price.add(tf_acPrice, c);
 
-	TitledBorder tb_price = BorderFactory.createTitledBorder(rentManager
-		.getString("border.title.prices"));
+	TitledBorder tb_price = BorderFactory
+		.createTitledBorder(RentManagerMain
+			.getString("border.title.prices"));
 	p_price.setBorder(tb_price);
 
 	c = new GridBagConstraints();

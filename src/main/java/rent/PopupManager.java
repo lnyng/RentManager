@@ -34,7 +34,7 @@ public class PopupManager extends MouseAdapter {
 
     PopupManager() {
 	popupTimer = new Timer(750, new ActionListener() {
-	    @Override
+	    
 	    public void actionPerformed(ActionEvent e) {
 		insideRectangle = insidePopuppable
 			.getActivatedRegion(mouseEvent);
@@ -45,14 +45,14 @@ public class PopupManager extends MouseAdapter {
 	});
 	popupTimer.setRepeats(false);
 	focusListener = new WindowFocusListener() {
-	    @Override
+	    
 	    public void windowGainedFocus(WindowEvent e) {
 		unregisterComponent(insidePopuppable);
 		Toolkit.getDefaultToolkit().removeAWTEventListener(
 			popupListener);
 	    }
 
-	    @Override
+	    
 	    public void windowLostFocus(WindowEvent e) {
 		String newText = popup.getTextArea().getText();
 		insidePopuppable.feedBack(insideRectangle, newText);
@@ -65,7 +65,7 @@ public class PopupManager extends MouseAdapter {
 	popupListener = new AWTEventListener() {
 	    private boolean isExitFromInside = false;
 
-	    @Override
+	    
 	    public void eventDispatched(AWTEvent event) {
 		if (event instanceof MouseEvent) {
 		    MouseEvent mouseEvent = (MouseEvent) event;

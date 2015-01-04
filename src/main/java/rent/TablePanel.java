@@ -95,7 +95,7 @@ public class TablePanel extends JPanel implements ChangeListener {
 		JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 		JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	bldgTabbedPane.insertTab(bldg.toString(), null, sp,
-		rentManager.getString("tip.bldg"), bldgIndex);
+		RentManagerMain.getString("tip.bldg"), bldgIndex);
 	bldgTabbedPane.setSelectedIndex(bldgIndex);
     }
 
@@ -136,7 +136,7 @@ public class TablePanel extends JPanel implements ChangeListener {
 	getTable(bldgIndex).getModel().removeTenant(tenant);
     }
 
-    @Override
+    
     public void stateChanged(ChangeEvent e) {
 	if (isSwitchingElement)
 	    return;

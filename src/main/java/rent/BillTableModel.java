@@ -30,16 +30,16 @@ public class BillTableModel extends AbstractTableModel {
     public BillTableModel(Building bldg) {
 	rentManager = RentManager.rm;
 	columnIdentifiers = new String[] {
-		rentManager.getString("table.header.room.num"),
-		rentManager.getString("table.header.tenant"),
-		rentManager.getString("table.header.rent"),
-		rentManager.getString("table.header.water"),
-		rentManager.getString("table.header.electricity"),
-		rentManager.getString("table.header.cleaning"),
-		rentManager.getString("table.header.internet"),
-		rentManager.getString("table.header.ac"),
-		rentManager.getString("table.header.other.fee"),
-		rentManager.getString("table.header.total") };
+		RentManagerMain.getString("table.header.room.num"),
+		RentManagerMain.getString("table.header.tenant"),
+		RentManagerMain.getString("table.header.rent"),
+		RentManagerMain.getString("table.header.water"),
+		RentManagerMain.getString("table.header.electricity"),
+		RentManagerMain.getString("table.header.cleaning"),
+		RentManagerMain.getString("table.header.internet"),
+		RentManagerMain.getString("table.header.ac"),
+		RentManagerMain.getString("table.header.other.fee"),
+		RentManagerMain.getString("table.header.total") };
 	Enumeration<Building.Story> e_story = bldg.children();
 	int storyIndex = 0;
 	while (e_story.hasMoreElements()) {
@@ -172,17 +172,17 @@ public class BillTableModel extends AbstractTableModel {
 	return indices;
     }
 
-    @Override
+    
     public int getRowCount() {
 	return indices.size();
     }
 
-    @Override
+    
     public int getColumnCount() {
 	return columnIdentifiers.length;
     }
 
-    @Override
+    
     public Object getValueAt(int rowIndex, int columnIndex) {
 	Object[] row = getRow(rowIndex);
 	return row[columnIndex];

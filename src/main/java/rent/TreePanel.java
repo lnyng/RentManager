@@ -56,18 +56,18 @@ class TreePanel extends JPanel implements TreeSelectionListener,
 	searchField = new SearchField(b_search);
 	b_search.setMargin(new Insets(0, 0, 0, 0));
 	b_search.setBorder(null);
-	b_search.setToolTipText(RentManager.rm.getString("tip.search"));
+	b_search.setToolTipText(RentManagerMain.getString("tip.search"));
 	b_search.addActionListener(this);
 	b_add = new JButton(rentManager.addIcon);
 	b_add.addActionListener(this);
 	b_add.setMargin(new Insets(0, 0, 0, 0));
 	b_add.setBorder(null);
-	b_add.setToolTipText(rentManager.getString("tip.add"));
+	b_add.setToolTipText(RentManagerMain.getString("tip.add"));
 	b_remove = new JButton(rentManager.removeIcon);
 	b_remove.addActionListener(this);
 	b_remove.setMargin(new Insets(0, 0, 0, 0));
 	b_remove.setBorder(null);
-	b_remove.setToolTipText(rentManager.getString("tip.remove"));
+	b_remove.setToolTipText(RentManagerMain.getString("tip.remove"));
 	JPanel top = new JPanel(new GridBagLayout());
 	GridBagConstraints c = new GridBagConstraints();
 	c.gridx = 0;
@@ -185,7 +185,7 @@ class TreePanel extends JPanel implements TreeSelectionListener,
 	} else if (source.equals(b_add)) {
 	    if (!rentManager.isGlobalEditable()) {
 		JLabel message = new JLabel("<html><p style='width:200px'>"
-			+ rentManager.getString("message.not.editable")
+			+ RentManagerMain.getString("message.not.editable")
 			+ "</html>");
 		JOptionPane.showMessageDialog(rentManager, message);
 		return;
@@ -207,18 +207,18 @@ class TreePanel extends JPanel implements TreeSelectionListener,
 		}
 	    }
 	    int option = JOptionPane.showConfirmDialog(rentManager, addElement,
-		    rentManager.getString("title.add.element.pane"),
+		    RentManagerMain.getString("title.add.element.pane"),
 		    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 	    if (option == JOptionPane.OK_OPTION) {
 		ElementsAdder adderPane = (ElementsAdder) addElement
 			.getSelectedComponent();
 		if (adderPane.addElement()) {
 		    MutableTreeNode newElement = adderPane.getNewElement();
-		    RentManager.logger.info("New element "
+		    RentManagerMain.logger.info("New element "
 			    + newElement.getClass().getSimpleName() + " ["
 			    + newElement.toString() + "] is added to "
-			    + newElement.getParent().getClass().getSimpleName() + " ["
-			    + newElement.getParent().toString() + "].");
+			    + newElement.getParent().getClass().getSimpleName()
+			    + " [" + newElement.getParent().toString() + "].");
 		    ((DefaultTreeModel) tree.getModel()).reload(adderPane
 			    .getNewElement().getParent());
 		    if (adderPane instanceof AddBuildingPanel) {
@@ -234,7 +234,7 @@ class TreePanel extends JPanel implements TreeSelectionListener,
 	} else if (source.equals(b_remove)) {
 	    if (!rentManager.isGlobalEditable()) {
 		JLabel message = new JLabel("<html><p style='width:200px'>"
-			+ rentManager.getString("message.not.editable")
+			+ RentManagerMain.getString("message.not.editable")
 			+ "</html>");
 		JOptionPane.showMessageDialog(rentManager, message);
 		return;
@@ -246,15 +246,15 @@ class TreePanel extends JPanel implements TreeSelectionListener,
 		    return;
 		String className = "";
 		if (element instanceof Building)
-		    className = rentManager.getString("class.bldg");
+		    className = RentManagerMain.getString("class.bldg");
 		else if (element instanceof Building.Story)
-		    className = rentManager.getString("class.story");
+		    className = RentManagerMain.getString("class.story");
 		else if (element instanceof Room)
-		    className = rentManager.getString("class.room");
+		    className = RentManagerMain.getString("class.room");
 		else if (element instanceof Tenant)
-		    className = rentManager.getString("class.tenant");
+		    className = RentManagerMain.getString("class.tenant");
 		String message = MessageFormat.format(
-			rentManager.getString("message.remove"), className,
+			RentManagerMain.getString("message.remove"), className,
 			element.toString());
 		int result = JOptionPane.showConfirmDialog(rentManager,
 			"<html><body><p style='width:200px'>" + message
@@ -262,31 +262,32 @@ class TreePanel extends JPanel implements TreeSelectionListener,
 			JOptionPane.YES_NO_OPTION);
 
 		if (result == JOptionPane.OK_OPTION) {
-		    RentManager.logger.info("Element "
+		    RentManagerMain.logger.info("Element "
 			    + element.getClass().getSimpleName() + " ["
 			    + element.toString()
 			    + "] and its children are removed.");
-		    if (className.equals(rentManager.getString("class.bldg"))) {
+		    if (className.equals(RentManagerMain
+			    .getString("class.bldg"))) {
 			rentManager.getTablePanel().removeTable(
 				(Building) element);
 			((DefaultTreeModel) tree.getModel())
 				.removeNodeFromParent(element);
 			addElement.getRoomPanel().updateData(null);
 			addElement.getTenantPanel().updateData(null);
-		    } else if (className.equals(rentManager
+		    } else if (className.equals(RentManagerMain
 			    .getString("class.story"))) {
 			rentManager.getTablePanel().removeStory(
 				(Building.Story) element);
 			((DefaultTreeModel) tree.getModel())
 				.removeNodeFromParent(element);
 			addElement.getTenantPanel().updateData(null);
-		    } else if (className.equals(rentManager
+		    } else if (className.equals(RentManagerMain
 			    .getString("class.room"))) {
 			rentManager.getTablePanel().removeRoom((Room) element);
 			((DefaultTreeModel) tree.getModel())
 				.removeNodeFromParent(element);
 			addElement.getTenantPanel().updateData(null);
-		    } else if (className.equals(rentManager
+		    } else if (className.equals(RentManagerMain
 			    .getString("class.tenant"))) {
 			rentManager.getTablePanel().removeTenant(
 				(Tenant) element);
@@ -316,11 +317,11 @@ class TreePanel extends JPanel implements TreeSelectionListener,
 	return nodes;
     }
 
-    @Override
+    
     public void treeNodesChanged(final TreeModelEvent e) {
     }
 
-    @Override
+    
     public void treeNodesInserted(final TreeModelEvent e) {
 	SwingUtilities.invokeLater(new Runnable() {
 	    public void run() {
@@ -330,22 +331,22 @@ class TreePanel extends JPanel implements TreeSelectionListener,
 	});
     }
 
-    @Override
+    
     public void treeNodesRemoved(TreeModelEvent e) {
     }
 
-    @Override
+    
     public void treeStructureChanged(TreeModelEvent e) {
     }
 
-    @Override
+    
     public void treeWillExpand(TreeExpansionEvent event)
 	    throws ExpandVetoException {
     }
 
     private boolean isCollapsing;
 
-    @Override
+    
     public void treeWillCollapse(TreeExpansionEvent event)
 	    throws ExpandVetoException {
 	if (!isCollapsing) {

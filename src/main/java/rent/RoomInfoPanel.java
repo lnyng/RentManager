@@ -86,20 +86,22 @@ public class RoomInfoPanel extends ElementInfoPanel {
 
 	JLabel l_icon = new JLabel(rentManager.roomIcon);
 	JLabel l_roomNumber = new JLabel(
-		rentManager.getString("label.room.num"));
+		RentManagerMain.getString("label.room.num"));
 	JLabel l_numberTenants = new JLabel(
-		rentManager.getString("label.room.tenant.num"));
-	JLabel l_signer = new JLabel(rentManager.getString("label.room.signer"));
+		RentManagerMain.getString("label.room.tenant.num"));
+	JLabel l_signer = new JLabel(
+		RentManagerMain.getString("label.room.signer"));
 	JLabel l_waterRecord = new JLabel(
-		rentManager.getString("label.room.water.record"));
+		RentManagerMain.getString("label.room.water.record"));
 	JLabel l_electricityRecord = new JLabel(
-		rentManager.getString("label.room.elect.record"));
-	JLabel l_rent = new JLabel(rentManager.getString("label.room.rent"));
+		RentManagerMain.getString("label.room.elect.record"));
+	JLabel l_rent = new JLabel(RentManagerMain.getString("label.room.rent"));
 	JLabel l_deposit = new JLabel(
-		rentManager.getString("label.room.deposit"));
+		RentManagerMain.getString("label.room.deposit"));
 	JLabel l_useInternet = new JLabel(
-		rentManager.getString("label.room.use.internet"));
-	JLabel l_useAc = new JLabel(rentManager.getString("label.room.use.ac"));
+		RentManagerMain.getString("label.room.use.internet"));
+	JLabel l_useAc = new JLabel(
+		RentManagerMain.getString("label.room.use.ac"));
 
 	setLayout(new GridBagLayout());
 
@@ -318,7 +320,7 @@ public class RoomInfoPanel extends ElementInfoPanel {
 	c.fill = GridBagConstraints.BOTH;
 	add(p_left, c);
 
-	TitledBorder tb_note = BorderFactory.createTitledBorder(rentManager
+	TitledBorder tb_note = BorderFactory.createTitledBorder(RentManagerMain
 		.getString("border.title.note"));
 	ta_note.setLineWrap(true);
 	ta_note.setWrapStyleWord(true);
@@ -354,7 +356,7 @@ public class RoomInfoPanel extends ElementInfoPanel {
     class RoomInfoListener implements FocusListener, ItemListener {
 	String oldValue = "";
 
-	@Override
+	
 	public void focusGained(FocusEvent e) {
 	    if (!rentManager.isGlobalEditable())
 		return;
@@ -376,7 +378,7 @@ public class RoomInfoPanel extends ElementInfoPanel {
 	    oldValue = comp.getText();
 	}
 
-	@Override
+	
 	public void focusLost(FocusEvent e) {
 	    if (!rentManager.isGlobalEditable())
 		return;
@@ -406,7 +408,7 @@ public class RoomInfoPanel extends ElementInfoPanel {
 		    tf_rent.setText(oldValue);
 		    return;
 		}
-		RentManager.logger.info("The rent of room ["
+		RentManagerMain.logger.info("The rent of room ["
 			+ currRoom.toString() + "] at building ["
 			+ currRoom.getBuilding().toString()
 			+ "] has been updated from " + oldValue + " to "
@@ -425,14 +427,14 @@ public class RoomInfoPanel extends ElementInfoPanel {
 		    tf_deposit.setText(oldValue);
 		    return;
 		}
-		RentManager.logger.info("The deposit of room ["
+		RentManagerMain.logger.info("The deposit of room ["
 			+ currRoom.toString() + "] at building ["
 			+ currRoom.getBuilding().toString()
 			+ "] has been updated from " + oldValue + " to "
 			+ newValue + ".");
 		currRoom.setDeposit(deposit);
 	    } else if (comp.equals(ta_note)) {
-		RentManager.logger.info("The note of room ["
+		RentManagerMain.logger.info("The note of room ["
 			+ currRoom.toString() + "] at building ["
 			+ currRoom.getBuilding().toString()
 			+ "] has been updated .");
@@ -450,7 +452,7 @@ public class RoomInfoPanel extends ElementInfoPanel {
 		    tf_waterRecord.setText(oldValue);
 		    return;
 		}
-		RentManager.logger.info("The water record of room ["
+		RentManagerMain.logger.info("The water record of room ["
 			+ currRoom.toString() + "] at building ["
 			+ currRoom.getBuilding().toString()
 			+ "] has been updated from " + oldValue + " to "
@@ -470,7 +472,7 @@ public class RoomInfoPanel extends ElementInfoPanel {
 		    tf_electricityRecord.setText(oldValue);
 		    return;
 		}
-		RentManager.logger.info("The electricity record of room ["
+		RentManagerMain.logger.info("The electricity record of room ["
 			+ currRoom.toString() + "] at building ["
 			+ currRoom.getBuilding().toString()
 			+ "] has been updated from " + oldValue + " to "
@@ -486,34 +488,36 @@ public class RoomInfoPanel extends ElementInfoPanel {
 		    tf_contractChangeDate.setText(oldValue);
 		    return;
 		}
-		RentManager.logger.info("The contract change date of room ["
-			+ currRoom.toString() + "] at building ["
-			+ currRoom.getBuilding().toString()
-			+ "] has been updated from " + oldValue + " to "
-			+ newValue + ".");
+		RentManagerMain.logger
+			.info("The contract change date of room ["
+				+ currRoom.toString() + "] at building ["
+				+ currRoom.getBuilding().toString()
+				+ "] has been updated from " + oldValue
+				+ " to " + newValue + ".");
 		currRoom.setContractChangeDate(contractStart);
 	    }
 	    rentManager.setHasModified(true);
 	}
 
-	@Override
+	
 	public void itemStateChanged(ItemEvent e) {
 	    if (isUpdatingInfo)
 		return;
 	    Object comp = e.getSource();
 	    boolean selected = ((JCheckBox) comp).isSelected();
 	    if (comp.equals(cb_useAc)) {
-		RentManager.logger.info("The AC using state of room ["
+		RentManagerMain.logger.info("The AC using state of room ["
 			+ currRoom.toString() + "] at building ["
 			+ currRoom.getBuilding().toString()
 			+ "] has been updated to " + selected + ".");
 		currRoom.setUseAC(selected);
 		updateTable();
 	    } else if (comp.equals(cb_useInternet)) {
-		RentManager.logger.info("The internet using state of room ["
-			+ currRoom.toString() + "] at building ["
-			+ currRoom.getBuilding().toString()
-			+ "] has been updated to " + selected + ".");
+		RentManagerMain.logger
+			.info("The internet using state of room ["
+				+ currRoom.toString() + "] at building ["
+				+ currRoom.getBuilding().toString()
+				+ "] has been updated to " + selected + ".");
 		currRoom.setUseInternet(selected);
 		updateTable();
 	    }
@@ -528,22 +532,22 @@ public class RoomInfoPanel extends ElementInfoPanel {
 	}
     }
 
-    @Override
+    
     public void updateInfo(Object element) {
 	isUpdatingInfo = true;
 	currRoom = (Room) element;
 	tf_roomNumber.setText(currRoom.getRoomNumber() + "");
 	int numTenants = currRoom.getChildCount();
 	tf_numberTenants.setText(numTenants + "");
-	String text = ((numTenants == 0) ? rentManager
+	String text = ((numTenants == 0) ? RentManagerMain
 		.getString("default.none") : currRoom.getContractSigner()) + "";
 	tf_signer.setText(text);
 	Date contractChangeDate = currRoom.getContractChangeDate();
-	text = (currRoom.isOccupied() ? rentManager
-		.getString("label.contract.start") : rentManager
+	text = (currRoom.isOccupied() ? RentManagerMain
+		.getString("label.contract.start") : RentManagerMain
 		.getString("label.contract.end"));
 	l_contractChangeDate.setText(text);
-	text = contractChangeDate == null ? rentManager
+	text = contractChangeDate == null ? RentManagerMain
 		.getString("default.n.a")
 		: (new SimpleDateFormat("MM/dd/yyyy"))
 			.format(contractChangeDate);
@@ -587,7 +591,7 @@ public class RoomInfoPanel extends ElementInfoPanel {
 	isUpdatingInfo = false;
     }
 
-    @Override
+    
     public void updateInfo() {
 	updateInfo(currRoom);
     }

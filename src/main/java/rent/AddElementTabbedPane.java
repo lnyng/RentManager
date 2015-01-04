@@ -18,15 +18,15 @@ public class AddElementTabbedPane extends JTabbedPane {
 	addRoom = new AddRoomPanel();
 	addBuilding = new AddBuildingPanel();
 
-	this.addTab(rentManager.getString("class.tenant"),
+	this.addTab(RentManagerMain.getString("class.tenant"),
 		rentManager.tenantSmallIcon, addTenant,
-		rentManager.getString("tip.add.tenant"));
-	this.addTab(rentManager.getString("class.room"),
+		RentManagerMain.getString("tip.add.tenant"));
+	this.addTab(RentManagerMain.getString("class.room"),
 		rentManager.roomSmallIcon, addRoom,
-		rentManager.getString("tip.add.room"));
-	this.addTab(rentManager.getString("class.bldg"),
+		RentManagerMain.getString("tip.add.room"));
+	this.addTab(RentManagerMain.getString("class.bldg"),
 		rentManager.buildingSmallIcon, addBuilding,
-		rentManager.getString("tip.add.bldg"));
+		RentManagerMain.getString("tip.add.bldg"));
     }
 
     public AddTenantPanel getTenantPanel() {

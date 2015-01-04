@@ -22,7 +22,7 @@ public class PropertyInfoPanel extends ElementInfoPanel {
 	add(ta_property, BorderLayout.CENTER);
     }
 
-    @Override
+    
     public void updateInfo(Object element) {
 	DefaultMutableTreeNode root = rentManager.getRoot();
 	int numBldgs = RentManager.getNumElements(1, root);
@@ -31,12 +31,12 @@ public class PropertyInfoPanel extends ElementInfoPanel {
 	int numTenants = RentManager.getNumElements(4, root);
 
 	String message = MessageFormat.format(
-		rentManager.getString("message.property.info"), numBldgs,
+		RentManagerMain.getString("message.property.info"), numBldgs,
 		numStories, numRooms, numTenants);
 	ta_property.setText(message);
     }
 
-    @Override
+    
     public void updateInfo() {
 	updateInfo(null);
     }
